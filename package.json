@@ -1,0 +1,22 @@
+{
+  "name": "biomedical-device-management",
+  "version": "1.0.0",
+  "description": "Biomedical Device Calibration & Maintenance Management System",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "build": "cd server && npm run build && cd ../client && npm run build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:fresh": "docker compose down -v && docker compose up -d --build",
+    "db:migrate": "cd server && npm run migrate",
+    "db:seed": "cd server && npm run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
