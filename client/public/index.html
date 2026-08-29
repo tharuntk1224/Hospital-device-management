@@ -1,0 +1,2659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Clinical Calibration & Maintenance Compliance Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg-core: #040608;
+  --bg-sidebar: #06090d;
+  --bg-card: rgba(9, 14, 20, 0.92);
+  --bg-card-hover: rgba(14, 22, 32, 0.94);
+  --bg-card-sub: rgba(18, 28, 40, 0.92);
+  
+  --border-dim: rgba(0, 242, 254, 0.08);
+  --border-neon: rgba(0, 242, 254, 0.25);
+  --border-glow: rgba(0, 242, 254, 0.45);
+  
+  --neon-cyan: #00f2fe;
+  --neon-pink: #ff2a6d;
+  --neon-purple: #9d4edd;
+  --neon-amber: #ffb703;
+  --neon-green: #00f59b;
+  
+  --text-main: #f1f5f9;
+  --text-muted: #7e8c9f;
+  --text-dim: #4b5869;
+  
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Orbitron', sans-serif;
+}
+
+/* Theme Class Overrides */
+body.theme-matrix {
+  --bg-core: #020503;
+  --bg-sidebar: #040905;
+  --bg-card: rgba(6, 14, 8, 0.92);
+  --bg-card-hover: rgba(10, 22, 13, 0.94);
+  --bg-card-sub: rgba(12, 28, 17, 0.92);
+  --border-dim: rgba(0, 245, 155, 0.08);
+  --border-neon: rgba(0, 245, 155, 0.25);
+  --border-glow: rgba(0, 245, 155, 0.45);
+  --neon-cyan: #00f59b;
+  --neon-purple: #00f59b;
+}
+
+body.theme-sunrise {
+  --bg-core: #090603;
+  --bg-sidebar: #100a06;
+  --bg-card: rgba(22, 14, 8, 0.92);
+  --bg-card-hover: rgba(28, 18, 11, 0.94);
+  --bg-card-sub: rgba(32, 20, 12, 0.92);
+  --border-dim: rgba(255, 183, 3, 0.08);
+  --border-neon: rgba(255, 183, 3, 0.25);
+  --border-glow: rgba(255, 183, 3, 0.45);
+  --neon-cyan: #ffb703;
+  --neon-purple: #ffb703;
+}
+
+body.theme-solaris {
+  --bg-core: #080304;
+  --bg-sidebar: #0f0507;
+  --bg-card: rgba(22, 8, 10, 0.92);
+  --bg-card-hover: rgba(28, 11, 13, 0.94);
+  --bg-card-sub: rgba(32, 12, 15, 0.92);
+  --border-dim: rgba(255, 42, 109, 0.08);
+  --border-neon: rgba(255, 42, 109, 0.25);
+  --border-glow: rgba(255, 42, 109, 0.45);
+  --neon-cyan: #ff2a6d;
+  --neon-purple: #ff2a6d;
+}
+
+body.theme-medical {
+  --bg-core: #f8fafc;
+  --bg-sidebar: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-hover: rgba(248, 250, 252, 0.95);
+  --bg-card-sub: rgba(241, 245, 249, 0.95);
+  --border-dim: rgba(14, 165, 233, 0.1);
+  --border-neon: rgba(14, 165, 233, 0.3);
+  --border-glow: rgba(14, 165, 233, 0.5);
+  --neon-cyan: #0ea5e9;
+  --neon-purple: #0ea5e9;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #94a3b8;
+}
+
+body.theme-slate {
+  --bg-core: #0f172a;
+  --bg-sidebar: #1e293b;
+  --bg-card: rgba(30, 41, 59, 0.92);
+  --bg-card-hover: rgba(51, 65, 85, 0.94);
+  --bg-card-sub: rgba(71, 85, 105, 0.92);
+  --border-dim: rgba(255, 255, 255, 0.06);
+  --border-neon: rgba(255, 255, 255, 0.2);
+  --border-glow: rgba(255, 255, 255, 0.4);
+  --neon-cyan: #94a3b8;
+  --neon-purple: #64748b;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg-core); color: var(--text-main); font-family: var(--font-sans); }
+
+/* ─── Scrollbars ─── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+::-webkit-scrollbar-thumb { background: rgba(0, 242, 254, 0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+
+/* ─── Grid & Telemetry Lines ─── */
+.cyber-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(157, 78, 221, 0.04) 0%, transparent 50%),
+    linear-gradient(to right, rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+}
+
+/* ─── Spotlight Glow ─── */
+.cursor-ambient-glow {
+  position: fixed; top: 0; left: 0; width: 450px; height: 450px;
+  margin-top: -225px; margin-left: -225px; pointer-events: none; z-index: 1;
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.065) 0%, rgba(157, 78, 221, 0.02) 45%, transparent 70%);
+  border-radius: 50%; mix-blend-mode: screen; will-change: transform; transition: opacity 0.5s ease;
+}
+
+/* ─── Landing Screen ─── */
+.login-screen {
+  position: fixed; inset: 0; z-index: 9999; background: var(--bg-core);
+  display: flex; flex-direction: column; overflow: hidden; align-items: center; justify-content: center;
+}
+.landing-header {
+  height: 70px; border-bottom: 1px solid var(--border-dim); background: rgba(6, 9, 13, 0.3);
+  backdrop-filter: blur(4px); display: flex; align-items: center; padding: 0 40px; justify-content: space-between;
+  position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+}
+.landing-content {
+  position: relative; z-index: 5; width: 100%; max-width: 840px; padding: 40px 20px; display: flex; align-items: center; justify-content: center;
+}
+.landing-hero-text {
+  background: rgba(9, 14, 20, 0.72); border: 1px solid var(--border-neon); border-radius: 16px;
+  padding: 40px; box-shadow: 0 0 45px rgba(0, 242, 254, 0.15); backdrop-filter: blur(2px); text-align: center;
+}
+.landing-hero-text h1 {
+  font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1.45;
+  background: linear-gradient(135deg, #fff 30%, var(--neon-cyan) 80%, var(--neon-purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px;
+  text-shadow: 0 0 40px rgba(0, 242, 254, 0.15);
+}
+.landing-hero-text p {
+  font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 28px; max-width: 620px; margin-left: auto; margin-right: auto;
+}
+.enter-command-btn {
+  padding: 16px 36px; border-radius: 8px; background: var(--neon-cyan); color: #040608;
+  font-family: var(--font-display); font-size: 13px; font-weight: 900; letter-spacing: 0.1em;
+  border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 12px;
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.35); transition: 0.2s; text-transform: uppercase;
+}
+.enter-command-btn:hover {
+  background: #fff; transform: translateY(-2px); box-shadow: 0 0 35px rgba(0, 242, 254, 0.6);
+}
+
+.landing-canvas-3d { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; cursor: grab; }
+.landing-canvas-3d:active { cursor: grabbing; }
+
+/* ─── App Shell ─── */
+.app-container {
+  display: flex; width: 100vw; height: 100vh; position: relative; z-index: 2; overflow: hidden;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width: 230px; background: var(--bg-sidebar); border-right: 1px solid var(--border-dim);
+  display: flex; flex-direction: column; flex-shrink: 0; z-index: 50; transition: transform 0.3s ease;
+}
+.sb-brand { padding: 20px; display: flex; align-items: center; gap: 10px; }
+.sb-brand-logo {
+  width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+}
+.sb-brand-text h1 {
+  font-family: var(--font-display); font-size: 13px; font-weight: 800; letter-spacing: 0.05em;
+  background: linear-gradient(90deg, #fff, var(--neon-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.sb-brand-text p {
+  font-size: 8px; font-family: var(--font-sans); color: var(--neon-cyan); letter-spacing: 0.03em; margin-top: 1px;
+}
+
+.sb-sync-btn {
+  margin: 0 16px 14px; padding: 8px 12px; border-radius: 6px; background: transparent; color: var(--neon-cyan);
+  font-family: var(--font-display); font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+  border: 1px solid var(--border-neon); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.1); transition: 0.2s;
+}
+.sb-sync-btn:hover {
+  background: rgba(0, 242, 254, 0.08); border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+}
+
+.sb-nav { flex: 1; padding: 0 12px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+.nav-link {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px;
+  color: var(--text-muted); font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; background: transparent; border: none; cursor: pointer; width: 100%;
+  text-align: left; transition: 0.15s; font-family: var(--font-sans);
+}
+.nav-link:hover { color: #fff; background: rgba(255,255,255,0.03); }
+.nav-link.active {
+  color: #fff; background: rgba(0, 242, 254, 0.05); border-left: 2px solid var(--neon-cyan);
+  box-shadow: inset 5px 0 10px rgba(0, 242, 254, 0.03);
+}
+.nav-link.active .nav-icon { color: var(--neon-cyan); }
+.nav-icon { font-size: 14px; width: 18px; text-align: center; }
+
+.sb-footer { padding: 12px 14px; border-top: 1px solid var(--border-dim); display: flex; flex-direction: column; gap: 2px; }
+.sb-footer-btn {
+  display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 4px;
+  color: var(--text-dim); font-size: 10px; font-weight: 600; text-transform: uppercase;
+  background: none; border: none; cursor: pointer; transition: 0.15s;
+}
+.sb-footer-btn:hover { color: var(--text-muted); }
+
+/* ─── Main Workspace ─── */
+.main-stage { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ─── Topbar ─── */
+.topbar {
+  height: 60px; border-bottom: 1px solid var(--border-dim); background: rgba(6, 9, 13, 0.8);
+  backdrop-filter: blur(12px); display: flex; align-items: center; padding: 0 20px; gap: 16px; flex-shrink: 0;
+}
+.mobile-menu-btn { display: none; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
+.top-title-area { display: flex; flex-direction: column; }
+.top-title-area span { font-size: 9px; font-family: var(--font-mono); color: var(--neon-cyan); letter-spacing: 0.1em; text-transform: uppercase; }
+.top-title-area h2 { font-size: 15px; font-family: var(--font-display); font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+
+.telemetry-strip {
+  display: flex; align-items: center; gap: 16px; margin-left: auto; font-family: var(--font-mono); font-size: 9px;
+}
+.tel-item { display: flex; align-items: center; gap: 6px; color: var(--text-muted); }
+.tel-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--neon-cyan); box-shadow: 0 0 6px var(--neon-cyan); }
+.tel-dot.green { background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green); }
+
+.topbar-actions { display: flex; align-items: center; gap: 10px; margin-left: 16px; }
+.top-icon-btn {
+  width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-dim);
+  color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.15s; font-size: 13px;
+}
+.top-icon-btn:hover { color: var(--neon-cyan); border-color: var(--neon-cyan); }
+
+.neural-sync-btn {
+  padding: 8px 14px; border-radius: 6px; background: var(--neon-cyan); color: #040608;
+  font-family: var(--font-display); font-size: 10px; font-weight: 900; border: none; cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.25); transition: 0.15s; display: flex; align-items: center; gap: 6px;
+}
+.neural-sync-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
+
+/* ─── Scrollable Workspace View ─── */
+.workspace { flex: 1; overflow-y: auto; padding: 20px 24px 80px; }
+
+/* ─── Dashboard Grid ─── */
+.dashboard-grid-layout {
+  display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;
+}
+.panel-card {
+  background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 10px; padding: 18px;
+  position: relative; transition: border-color 0.2s, transform 0.2s;
+}
+.panel-card:hover { border-color: var(--border-neon); transform: translateY(-1px); }
+
+.panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.panel-title { font-size: 12px; font-family: var(--font-display); font-weight: 700; color: #fff; letter-spacing: 0.05em; text-transform: uppercase; }
+.panel-controls { display: flex; gap: 8px; font-size: 12px; color: var(--text-dim); cursor: pointer; }
+.panel-controls span:hover { color: var(--neon-cyan); }
+
+/* ─── Sync Status Panel ─── */
+.sync-row {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px;
+  padding: 12px 18px; background: rgba(0, 242, 254, 0.02); border: 1px solid var(--border-dim); border-radius: 8px; margin-bottom: 20px;
+}
+.sync-percentage { font-size: 32px; font-family: var(--font-display); font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
+.sync-progress-container { width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+.sync-progress-bar { height: 100%; background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); width: 98.4%; }
+
+/* ─── Canvas Network Visualizer ─── */
+.net-visualizer-container {
+  height: 320px; background: #05070a; border: 1px solid rgba(0, 242, 254, 0.04); border-radius: 8px;
+  position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.net-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.coordinate-card {
+  position: absolute; bottom: 12px; left: 12px; padding: 8px 12px; background: rgba(6, 9, 13, 0.9);
+  border: 1px solid var(--border-dim); border-radius: 6px; font-family: var(--font-mono); font-size: 9px;
+  color: var(--neon-cyan); pointer-events: none; z-index: 5;
+}
+
+/* ─── Active Nodes ─── */
+.nodes-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+.node-card {
+  background: var(--bg-card-sub); border: 1px solid var(--border-dim); border-radius: 8px; padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 8px; transition: 0.15s;
+}
+.node-card:hover { border-color: rgba(0, 242, 254, 0.2); }
+.node-status-line { display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
+.node-status-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); }
+.node-card.warning { border-left: 2px solid var(--neon-pink); }
+.node-card.cyan-accent { border-left: 2px solid var(--neon-cyan); }
+
+/* ─── Telemetry Charts ─── */
+.telemetry-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+.telemetry-chart-card {
+  background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 10px; padding: 16px;
+  display: flex; flex-direction: column; height: 160px;
+}
+.tel-canvas { flex: 1; min-height: 0; width: 100%; }
+
+/* ─── Metric Box ─── */
+.metric-mini-box {
+  background: var(--bg-card-sub); border: 1px solid var(--border-dim); border-radius: 8px; padding: 12px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+
+/* ─── Critical Anomalies / Alerts ─── */
+.anomalies-container { display: flex; flex-direction: column; gap: 10px; }
+.anomaly-item {
+  padding: 10px 14px; border: 1px solid rgba(255, 42, 109, 0.12); background: rgba(255, 42, 109, 0.02);
+  border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;
+}
+.anomaly-item strong { color: var(--neon-pink); font-family: var(--font-display); }
+
+/* ─── Devices Inventory & CRUD ─── */
+.devices-grid-stage { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.dt-card {
+  background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 10px; padding: 18px;
+  display: flex; flex-direction: column; gap: 12px; transition: 0.15s;
+}
+.dt-card:hover { border-color: var(--neon-cyan); }
+.dt-row { display: flex; justify-content: space-between; font-size: 11px; }
+
+/* ─── MedAI Agent Chat Layout ─── */
+.agent-stage { display: grid; grid-template-columns: 280px 1fr; gap: 20px; height: calc(100vh - 160px); }
+.agent-sidebar {
+  background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: 10px; padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.agent-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.agent-bubble { max-width: 80%; padding: 12px 16px; border-radius: 10px; font-size: 12px; line-height: 1.5; }
+.agent-bubble.bot { align-self: flex-start; background: var(--bg-card-sub); border: 1px solid var(--border-dim); border-left: 2px solid var(--neon-cyan); }
+.agent-bubble.user { align-self: flex-end; background: rgba(0, 242, 254, 0.08); border: 1px solid var(--border-neon); }
+
+/* ─── Bottom Mobile Nav ─── */
+.mobile-bottom-nav {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 60px;
+  background: rgba(6, 9, 13, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border-dim);
+  z-index: 100; justify-content: space-around; align-items: center;
+}
+.m-nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-muted);
+  font-size: 9px; font-family: var(--font-mono); text-transform: uppercase; background: none; border: none; cursor: pointer;
+}
+.m-nav-item.active { color: var(--neon-cyan); }
+
+/* ─── Modal Dialog CSS ─── */
+.cyber-modal-overlay {
+  position: fixed; inset: 0; background: rgba(4, 6, 8, 0.85); backdrop-filter: blur(12px);
+  z-index: 999; display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+}
+.cyber-modal-overlay.open { opacity: 1; pointer-events: all; }
+.cyber-modal-card {
+  background: #090e14; border: 1px solid var(--border-neon); border-radius: 12px;
+  width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.25); transform: scale(0.95); transition: transform 0.25s ease;
+}
+.cyber-modal-overlay.open .cyber-modal-card { transform: scale(1); }
+
+/* ─── High Tech Cyber Forms and Tables Styles ─── */
+.table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; }
+.cyber-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
+.cyber-table th {
+  padding: 12px; border-bottom: 2px solid var(--border-neon); color: var(--neon-cyan);
+  font-family: var(--font-display); font-size: 10px; font-weight: 700; text-transform: uppercase;
+}
+.cyber-table td { padding: 12px; border-bottom: 1px solid var(--border-dim); color: var(--text-main); }
+.cyber-table tr:hover td { background: rgba(255, 255, 255, 0.01); }
+.device-id-cell { font-family: var(--font-mono); color: var(--neon-cyan); font-weight: 700; cursor: pointer; }
+.device-id-cell:hover { text-decoration: underline; }
+
+.badge-neon {
+  display: inline-block; padding: 4px 8px; border-radius: 4px; font-family: var(--font-mono);
+  font-size: 8px; font-weight: 700; border: 1px solid transparent; text-transform: uppercase;
+}
+.badge-neon.online { color: var(--neon-green); border-color: rgba(0, 245, 155, 0.2); background: rgba(0, 245, 155, 0.04); }
+.badge-neon.overdue { color: var(--neon-pink); border-color: rgba(255, 42, 109, 0.2); background: rgba(255, 42, 109, 0.04); }
+.badge-neon.duesoon { color: var(--neon-amber); border-color: rgba(255, 183, 3, 0.2); background: rgba(255, 183, 3, 0.04); }
+
+.login-label {
+  display: block; font-size: 10px; font-family: var(--font-mono); color: var(--neon-cyan);
+  text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.05em; text-align: left;
+}
+.login-input {
+  width: 100%; padding: 10px 14px; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-neon);
+  border-radius: 6px; color: #fff; font-size: 12px; outline: none; transition: 0.2s;
+  font-family: var(--font-sans); box-sizing: border-box; display: block;
+}
+.login-input:focus {
+  border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+}
+select.login-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%2300f2fe' stroke-width='1.5'><path d='M1 1l4 4 4-4'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 32px;
+}
+select.login-input option {
+  background-color: #090e14 !important;
+  color: #ffffff !important;
+  padding: 8px;
+}
+textarea.login-input {
+  resize: vertical;
+}
+.login-btn {
+  width: 100%; padding: 12px; border-radius: 6px; background: var(--neon-cyan); color: #040608;
+  font-family: var(--font-display); font-size: 11px; font-weight: 900; border: none; cursor: pointer;
+  letter-spacing: 0.08em; transition: 0.15s; text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+}
+.login-btn:hover {
+  background: #fff; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+}
+
+body.theme-medical select.login-input option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+body.theme-medical .login-input {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+/* ─── Responsive Media Queries ─── */
+@media (max-width: 1024px) {
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .mobile-menu-btn { display: block; }
+  .dashboard-grid-layout { grid-template-columns: 1fr; }
+  .telemetry-row { grid-template-columns: 1fr; }
+  .devices-grid-stage { grid-template-columns: 1fr; }
+  .agent-stage { grid-template-columns: 1fr; }
+  .agent-sidebar { display: none; }
+  .mobile-bottom-nav { display: flex; }
+  .workspace { padding: 16px 16px 80px; }
+  .cursor-ambient-glow { display: none; }
+  .landing-content { grid-template-columns: 1fr; padding: 0 20px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="cyber-bg"></div>
+
+<!-- Spotlight Glow -->
+<div class="cursor-ambient-glow" id="spotlightGlow"></div>
+
+<!-- Full-screen dynamic 3D background canvas -->
+<canvas id="cyberBackgroundCanvas3D" style="position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:0.1;"></canvas>
+
+<!-- ─── 3D Rotating Dynamic Landing Portal ─── -->
+<div class="login-screen" id="loginScreen">
+  <canvas class="landing-canvas-3d" id="loginCanvas3D"></canvas>
+  
+  <header class="landing-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="sb-brand-logo" style="width:30px; height:30px; font-size:14px;">⚕</div>
+      <strong style="font-family:var(--font-display); font-size:12px; letter-spacing:0.05em; color:#fff;">BIOMED REGISTRY</strong>
+    </div>
+    <div style="font-family:var(--font-mono); font-size:9px; color:var(--neon-green); display:flex; align-items:center; gap:6px;">
+      <span class="tel-dot green" style="width:6px; height:6px;"></span> SYNC OPERATIONAL
+    </div>
+  </header>
+
+  <div class="landing-content">
+    <div class="landing-hero-text" style="width: 100%; max-width: 480px;">
+      <h1 style="font-size: 20px; margin-bottom: 12px;">Clinical Calibration Registry</h1>
+      <p style="font-size: 11px; margin-bottom: 20px;">Hospitals and laboratories must regularly calibrate biomedical devices and maintain maintenance records to comply with regulatory standards.</p>
+      
+      <!-- Login Form Wrap -->
+      <div id="loginFormWrap" style="display:block;">
+        <div style="text-align: left; margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display:block; width:100%;">
+            <label class="login-label">Operator Email</label>
+            <input class="login-input" id="login-email" type="email" value="admin@hospital.com" placeholder="admin@hospital.com"/>
+          </div>
+          <div style="display:block; width:100%;">
+            <label class="login-label">Access Password</label>
+            <div style="position: relative; width: 100%;">
+              <input class="login-input" id="login-password" type="password" value="Admin@123" placeholder="Admin@123" style="padding-right: 44px;"/>
+              <button onclick="togglePasswordVisibility('login-password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; background: none; border: none; color: var(--neon-cyan); font-size: 14px; outline: none;" type="button">👁️</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="enter-command-btn" onclick="validateSystemLogin()" style="width:100%; justify-content:center;">
+          <span>📡</span> INITIALIZE SYSTEM SYNC
+        </button>
+
+        <div style="margin-top: 16px; font-size: 11px;">
+          <span style="color: var(--text-muted);">New Operator? </span>
+          <a href="javascript:void(0)" onclick="toggleLoginCard('register')" style="color: var(--neon-cyan); text-decoration: none; font-weight: 700;">CREATE ACCOUNT</a>
+        </div>
+      </div>
+
+      <!-- Register Form Wrap (Initially hidden) -->
+      <div id="registerFormWrap" style="display:none;">
+        <div style="text-align: left; margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display:block; width:100%;">
+            <label class="login-label">New Operator Email</label>
+            <input class="login-input" id="register-email" type="email" placeholder="operator@hospital.com"/>
+          </div>
+          <div style="display:block; width:100%;">
+            <label class="login-label">Assign Password</label>
+            <div style="position: relative; width: 100%;">
+              <input class="login-input" id="register-password" type="password" placeholder="Min 6 characters" style="padding-right: 44px;"/>
+              <button onclick="togglePasswordVisibility('register-password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; background: none; border: none; color: var(--neon-cyan); font-size: 14px; outline: none;" type="button">👁️</button>
+            </div>
+          </div>
+          <div style="display:block; width:100%;">
+            <label class="login-label">Assigned Department</label>
+            <select class="login-input" id="register-dept">
+              <option value="Radiology / Node-Alpha">Radiology / Node-Alpha</option>
+              <option value="ICU / Node-Beta">ICU / Node-Beta</option>
+              <option value="Cardiology / Node-Gamma">Cardiology / Node-Gamma</option>
+              <option value="Lab / Node-Delta">Lab / Node-Delta</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="enter-command-btn" onclick="executeOperatorRegistration()" style="width:100%; justify-content:center; background:var(--neon-green); box-shadow:0 0 15px rgba(0, 245, 155, 0.2);">
+          <span>🛡️</span> REGISTER OPERATOR NODE
+        </button>
+
+        <div style="margin-top: 16px; font-size: 11px;">
+          <span style="color: var(--text-muted);">Already registered? </span>
+          <a href="javascript:void(0)" onclick="toggleLoginCard('login')" style="color: var(--neon-cyan); text-decoration: none; font-weight: 700;">LOGIN HERE</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="position:absolute; bottom:20px; left:20px; z-index:5; font-family:var(--font-mono); font-size:9px; color:var(--neon-cyan); pointer-events:none; line-height:1.4;">
+    SYS_AXIS_ROTATION: active | DRAG MOUSE ON BACKGROUND TO ROTATE 3D GRID
+  </div>
+</div>
+
+<!-- ─── Main Application Command Shell ─── -->
+<div class="app-container" style="display:none;" id="appShell">
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="appSidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-logo">⚕</div>
+      <div class="sb-brand-text">
+        <h1>BIOMED REGISTRY</h1>
+        <p style="font-size:7px; color:var(--text-muted);">Calibration & Maintenance</p>
+      </div>
+    </div>
+
+    <button class="sb-sync-btn" onclick="triggerSystemSync()">
+      <span>🔄</span> SYSTEM SYNC
+    </button>
+
+    <nav class="sb-nav">
+      <button class="nav-link active" onclick="switchTab('dashboard')">
+        <span class="nav-icon">⊞</span> DASHBOARD
+      </button>
+      <button class="nav-link" onclick="switchTab('devices')">
+        <span class="nav-icon">🔬</span> DEVICES
+      </button>
+      <button class="nav-link" onclick="switchTab('calibration')">
+        <span class="nav-icon">🎚️</span> CALIBRATION
+      </button>
+      <button class="nav-link" onclick="switchTab('maintenance')">
+        <span class="nav-icon">🛠️</span> MAINTENANCE
+      </button>
+      <button class="nav-link" onclick="switchTab('compliance')">
+        <span class="nav-icon">🛡️</span> COMPLIANCE
+      </button>
+      <button class="nav-link" onclick="switchTab('media')">
+        <span class="nav-icon">🧠</span> MEDAI AGENT
+      </button>
+      <button class="nav-link" onclick="switchTab('feedback')">
+        <span class="nav-icon">💬</span> FEEDBACK
+      </button>
+      <button class="nav-link" onclick="switchTab('support')">
+        <span class="nav-icon">❓</span> SUPPORT
+      </button>
+      <button class="nav-link" onclick="switchTab('logs')">
+        <span class="nav-icon">📋</span> LOGS
+      </button>
+    </nav>
+
+    <div class="sb-footer">
+      <button class="sb-footer-btn" style="border-color:var(--border-neon); color:var(--neon-cyan);" onclick="exportDataLogs()">📥 EXPORT LOGS</button>
+    </div>
+  </aside>
+
+  <!-- Main Stage -->
+  <main class="main-stage">
+    
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
+
+      <div class="top-title-area">
+        <span>Clinical Calibration & Maintenance</span>
+        <h2 style="font-size:12px; color:var(--neon-cyan);">Biomedical Device Compliance Registry</h2>
+      </div>
+
+      <div class="search-container" style="flex:1; max-width:200px; margin-left:20px; position:relative;">
+        <span class="search-icon" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:13px; color:var(--text-dim);">🔍</span>
+        <input class="search-input" style="width:100%; padding:8px 12px 8px 34px; background:rgba(255,255,255,0.03); border:1px solid var(--border-dim); border-radius:6px; color:#fff; font-size:11px; font-family:var(--font-mono); outline:none;" id="globalSearch" placeholder="SEARCH DEVICES..." oninput="handleSearch(this.value)"/>
+      </div>
+
+      <!-- High Tech Telemetry strip -->
+      <div class="telemetry-strip">
+        <div class="tel-item">
+          <span class="tel-dot"></span> DEVICE LOAD 42.8%
+        </div>
+        <div class="tel-item">
+          <span class="tel-dot"></span> LATENCY 1.23ms
+        </div>
+        <div class="tel-item">
+          <span class="tel-dot green"></span> SYSTEM ONLINE
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <select class="login-input" style="background:#090e14; border-color:var(--border-neon); color:var(--neon-cyan); padding:5px 8px; font-size:10px; font-family:var(--font-mono); width:130px; margin-right:10px;" id="themeSelector" onchange="applySystemTheme(this.value)">
+          <option value="cyber">🌌 Cyber Turquoise</option>
+          <option value="matrix">🟩 Matrix Green</option>
+          <option value="sunrise">🍊 Neon Sunrise</option>
+          <option value="solaris">🔴 Solaris Red</option>
+          <option value="medical">🩺 Medical Clean</option>
+          <option value="slate">🔘 Monochrome Slate</option>
+        </select>
+
+        <button class="neural-sync-btn" onclick="triggerSystemSync()">
+          <span>🔄</span> SYNC
+        </button>
+        <button class="top-icon-btn" title="AI Configuration" onclick="openConfigModal()">
+          ⚙️
+        </button>
+        <div class="avatar-badge" title="Dr. Tharun (Lead Biomedical Engineer)">
+          <div class="avatar-inner">TK</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable Workspace View -->
+    <section class="workspace" id="workspaceContent">
+      <!-- Injected dynamically -->
+    </section>
+
+  </main>
+
+</div>
+
+<!-- Mobile Bottom Navigation Bar -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav" style="display:none;">
+  <button class="m-nav-item active" id="mTab-dashboard" onclick="switchTab('dashboard')">
+    <span class="m-icon">⊞</span>
+    <span>Dashboard</span>
+  </button>
+  <button class="m-nav-item" id="mTab-devices" onclick="switchTab('devices')">
+    <span class="m-icon">🔬</span>
+    <span>Devices</span>
+  </button>
+  <button class="m-nav-item" id="mTab-calibration" onclick="switchTab('calibration')">
+    <span class="m-icon">🎚️</span>
+    <span>Calibration</span>
+  </button>
+  <button class="m-nav-item" id="mTab-feedback" onclick="switchTab('feedback')">
+    <span class="m-icon">💬</span>
+    <span>Feedback</span>
+  </button>
+</nav>
+
+<!-- ─── Device Details Modal ─── -->
+<div class="cyber-modal-overlay" id="deviceDetailsModal">
+  <div class="cyber-modal-card" style="max-width: 650px;">
+    <div style="padding:20px; border-bottom:1px solid var(--border-dim); display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="font-family:var(--font-display); font-size:14px; color:#fff;" id="detModalTitle">DEVICE DIAGNOSTICS</h3>
+      <button onclick="closeDeviceDetailsModal()" style="background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">✕</button>
+    </div>
+    <div style="padding:20px; display:flex; flex-direction:column; gap:18px;" id="detModalContent">
+      <!-- Dynamic details rendered here -->
+    </div>
+  </div>
+</div>
+
+<!-- Device Register Modal -->
+<div class="cyber-modal-overlay" id="deviceModal">
+  <div class="cyber-modal-card">
+    <div style="padding:20px; border-bottom:1px solid var(--border-dim); display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="font-family:var(--font-display); font-size:14px; color:#fff;" id="modalTitle">REGISTER NEW DEVICE</h3>
+      <button onclick="closeDeviceModal()" style="background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">✕</button>
+    </div>
+    <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+      <input type="hidden" id="form-device-index"/>
+      <div style="display:block; width:100%;">
+        <label class="login-label">Device ID / Code</label>
+        <input class="login-input" id="form-id" placeholder="e.g. ECG-002"/>
+      </div>
+      <div style="display:block; width:100%;">
+        <label class="login-label">Device Name / Model</label>
+        <input class="login-input" id="form-name" placeholder="e.g. Siemens MRI Scanner XT-900"/>
+      </div>
+      <div style="display:block; width:100%;">
+        <label class="login-label">Device Type</label>
+        <select class="login-input" id="form-type">
+          <option value="ECG MACHINE">ECG MACHINE</option>
+          <option value="PATIENT MONITOR">PATIENT MONITOR</option>
+          <option value="INFUSION PUMP">INFUSION PUMP</option>
+          <option value="VENTILATOR">VENTILATOR</option>
+          <option value="BLOOD ANALYZER">BLOOD ANALYZER</option>
+          <option value="X-RAY MACHINE">X-RAY MACHINE</option>
+        </select>
+      </div>
+      <div style="display:block; width:100%;">
+        <label class="login-label">Facility Department</label>
+        <select class="login-input" id="form-dept">
+          <option value="Radiology / Node-Alpha">Radiology / Node-Alpha</option>
+          <option value="ICU / Node-Beta">ICU / Node-Beta</option>
+          <option value="Cardiology / Node-Gamma">Cardiology / Node-Gamma</option>
+          <option value="Lab / Node-Delta">Lab / Node-Delta</option>
+        </select>
+      </div>
+      <div style="display:block; width:100%;">
+        <label class="login-label">Location / Ward</label>
+        <input class="login-input" id="form-location" placeholder="e.g. Ward C, Floor 3"/>
+      </div>
+      <div style="display:block; width:100%;">
+        <label class="login-label">Calibration Accuracy Target</label>
+        <input class="login-input" id="form-p2" placeholder="e.g. 99.2%"/>
+      </div>
+      <button class="login-btn" onclick="saveDeviceNode()">💾 COMPOSE & REGISTER</button>
+    </div>
+  </div>
+</div>
+
+<!-- Configuration Modal -->
+<div class="cyber-modal-overlay" id="configModal">
+  <div class="cyber-modal-card">
+    <div style="padding:20px; border-bottom:1px solid var(--border-dim); display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="font-family:var(--font-display); font-size:14px; color:#fff;">⚙️ AI NEURAL CONFIGURATION</h3>
+      <button onclick="closeConfigModal()" style="background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">✕</button>
+    </div>
+    <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+      <div style="display:block; width:100%;">
+        <label class="login-label">AI Telemetry Provider</label>
+        <select class="login-input" id="config-provider" onchange="updateModelSelect()">
+          <option value="gemini">Google Gemini AI</option>
+          <option value="openai">OpenAI (GPT-4o / GPT-3.5)</option>
+        </select>
+      </div>
+      <div style="display:block; width:100%;">
+        <label class="login-label">Model Endpoint</label>
+        <select class="login-input" id="config-model"></select>
+      </div>
+      <div style="display:block; width:100%;">
+        <label class="login-label">Authorization Token Key</label>
+        <input class="login-input" style="font-family:monospace;" id="apiKeyField" value=""/>
+      </div>
+      <button class="login-btn" onclick="saveConfigKey()">💾 SAVE & APPLY SETTINGS</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  SMOOTH LERP CURSOR SPOTLIGHT ANIMATOR
+// ═══════════════════════════════════════════════════════════════════
+let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+let spotlight = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+const speed = 0.08;
+
+window.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+function animateSpotlight() {
+  spotlight.x += (mouse.x - spotlight.x) * speed;
+  spotlight.y += (mouse.y - spotlight.y) * speed;
+
+  const glowEl = document.getElementById('spotlightGlow');
+  if (glowEl) {
+    glowEl.style.transform = `translate3d(${spotlight.x}px, ${spotlight.y}px, 0)`;
+  }
+  requestAnimationFrame(animateSpotlight);
+}
+requestAnimationFrame(animateSpotlight);
+
+// ═══════════════════════════════════════════════════════════════════
+//  SYSTEM THEMES CONFIGURATION (6 CUSTOM THEMES)
+// ═══════════════════════════════════════════════════════════════════
+let activeTheme = 'cyber';
+
+function applySystemTheme(themeName) {
+  activeTheme = themeName;
+  document.body.className = ''; // Reset
+  if(themeName !== 'cyber') {
+    document.body.classList.add(`theme-${themeName}`);
+  }
+
+  const spotlightGlow = document.getElementById('spotlightGlow');
+  const canvas3D = document.getElementById('cyberBackgroundCanvas3D');
+  if (spotlightGlow) {
+    if (themeName === 'matrix') {
+      spotlightGlow.style.background = 'radial-gradient(circle, rgba(0, 245, 155, 0.08) 0%, transparent 70%)';
+      if(canvas3D) canvas3D.style.opacity = '0.12';
+    } else if (themeName === 'sunrise') {
+      spotlightGlow.style.background = 'radial-gradient(circle, rgba(255, 183, 3, 0.08) 0%, transparent 70%)';
+      if(canvas3D) canvas3D.style.opacity = '0.12';
+    } else if (themeName === 'solaris') {
+      spotlightGlow.style.background = 'radial-gradient(circle, rgba(255, 42, 109, 0.08) 0%, transparent 70%)';
+      if(canvas3D) canvas3D.style.opacity = '0.12';
+    } else if (themeName === 'medical') {
+      spotlightGlow.style.background = 'radial-gradient(circle, rgba(14, 165, 233, 0.05) 0%, transparent 70%)';
+      if(canvas3D) canvas3D.style.opacity = '0.04';
+    } else if (themeName === 'slate') {
+      spotlightGlow.style.background = 'radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%)';
+      if(canvas3D) canvas3D.style.opacity = '0.08';
+    } else {
+      spotlightGlow.style.background = 'radial-gradient(circle, rgba(0, 242, 254, 0.065) 0%, rgba(157, 78, 221, 0.02) 45%, transparent 70%)';
+      if(canvas3D) canvas3D.style.opacity = '0.1';
+    }
+  }
+
+  showToast(`🎨 System theme changed to ${themeName.toUpperCase()}`);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SYSTEM LOGIN TRANSITION & CREATION
+// ═══════════════════════════════════════════════════════════════════
+function executeSystemLogin() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'flex';
+  if(window.innerWidth <= 1024) {
+    document.getElementById('mobileBottomNav').style.display = 'flex';
+  }
+  showToast('🔓 Telemetric Command Center Active.');
+  switchTab('dashboard');
+}
+
+function validateSystemLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+
+  const user = STATE.accounts.find(x => x.email === email && x.password === password);
+  if(user) {
+    executeSystemLogin();
+  } else {
+    showToast('❌ Access Denied: Invalid Credentials');
+  }
+}
+
+function executeOperatorRegistration() {
+  const email = document.getElementById('register-email').value.trim();
+  const password = document.getElementById('register-password').value.trim();
+  const dept = document.getElementById('register-dept').value;
+
+  if(!email || !password) {
+    showToast('❌ Registration Mismatch: Enter Email and Password');
+    return;
+  }
+  if(password.length < 6) {
+    showToast('❌ Security Warning: Password must be >= 6 characters');
+    return;
+  }
+
+  if(STATE.accounts.some(x => x.email === email)) {
+    showToast('❌ Account exists for this operator signature');
+    return;
+  }
+
+  STATE.accounts.push({ email, password, dept });
+  showToast('✅ Operator account registered. Please login.');
+  
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-password').value = password;
+  
+  toggleLoginCard('login');
+}
+
+function toggleLoginCard(view) {
+  const loginForm = document.getElementById('loginFormWrap');
+  const regForm = document.getElementById('registerFormWrap');
+  if(view === 'register') {
+    loginForm.style.display = 'none';
+    regForm.style.display = 'block';
+  } else {
+    loginForm.style.display = 'block';
+    regForm.style.display = 'none';
+  }
+}
+
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if(input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🔒';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  GLOBAL APPLICATION STATE & DATA (24 DEVICES FOR COMPLIANCE)
+// ═══════════════════════════════════════════════════════════════════
+let API = {
+  provider: localStorage.getItem('ai_provider') || 'gemini',
+  key: localStorage.getItem('ai_key') || '',
+  model: localStorage.getItem('ai_model') || 'gemini-pro-latest'
+};
+
+const STATE = {
+  currentTab: 'dashboard',
+  searchQuery: '',
+  filterStatus: 'ALL',
+  selectedDeviceId: 'ECG-001',
+  accounts: [
+    { email: 'admin@hospital.com', password: 'Admin@123' }
+  ],
+  devices: [
+    { id:'ECG-001', name:'Siemens ECG Alpha', type:'ECG MACHINE', dept:'Radiology / Node-Alpha', location:'Ward C, Floor 3', status:'Operational', calibStatus:'calibrated', lastCal:'12 Aug 2026', nextCal:'12 Feb 2027', calibAccuracy:'99.2%', lastService:'05 Aug 2026', nextService:'05 Nov 2026', technician:'Technician A', temp:36.8, acc:99.2, stab:98.7, volt:120.4, errorCode:null },
+    { id:'PM-004', name:'Patient Monitor PM-4', type:'PATIENT MONITOR', dept:'ICU / Node-Beta', location:'ICU Bed 12', status:'Calibration Due', calibStatus:'duesoon', lastCal:'10 Feb 2026', nextCal:'10 Aug 2026', calibAccuracy:'97.8%', lastService:'20 May 2026', nextService:'20 Nov 2026', technician:'Technician B', temp:37.2, acc:97.8, stab:96.9, volt:119.8, errorCode:'THERMAL_VARIANCE' },
+    { id:'IP-007', name:'Infusion Pump Precision', type:'INFUSION PUMP', dept:'Cardiology / Node-Gamma', location:'Cardiac Wing', status:'Operational', calibStatus:'calibrated', lastCal:'15 Mar 2026', nextCal:'15 Sep 2026', calibAccuracy:'98.9%', lastService:'10 Jun 2026', nextService:'10 Dec 2026', technician:'Technician C', temp:36.5, acc:98.9, stab:98.2, volt:120.1, errorCode:null },
+    { id:'VENT-002', name:'Ventilator Pro v9', type:'VENTILATOR', dept:'ICU / Node-Beta', location:'ICU Bed 5', status:'Operational', calibStatus:'calibrated', lastCal:'05 May 2026', nextCal:'05 Nov 2026', calibAccuracy:'99.4%', lastService:'05 Aug 2026', nextService:'05 Nov 2026', technician:'Technician A', temp:36.9, acc:99.4, stab:99.1, volt:120.5, errorCode:null },
+    { id:'BA-003', name:'Blood analyzer BA-3', type:'BLOOD ANALYZER', dept:'Lab / Node-Delta', location:'Central Lab', status:'Maintenance Due', calibStatus:'overdue', lastCal:'01 Jun 2026', nextCal:'01 Dec 2026', calibAccuracy:'99.1%', lastService:'01 Feb 2026', nextService:'01 Aug 2026', technician:'Technician B', temp:36.4, acc:99.1, stab:98.5, volt:120.2, errorCode:'MAINTENANCE_OVERDUE' },
+    { id:'XRY-004', name:'Digital X-Ray Mobile', type:'X-RAY MACHINE', dept:'Radiology / Node-Alpha', location:'ER Room A', status:'Maintenance Required', calibStatus:'overdue', lastCal:'10 Jan 2026', nextCal:'10 Jul 2026', calibAccuracy:'95.6%', lastService:'10 Jan 2026', nextService:'10 Jul 2026', technician:'Technician C', temp:38.2, acc:95.6, stab:94.8, volt:118.4, errorCode:'CALIBRATION_OVERDUE' },
+    // 18 Additional dummy device objects to complete the 24 count
+    { id:'ECG-005', name:'HP ECG Portable', type:'ECG MACHINE', dept:'Cardiology / Node-Gamma', location:'Ward A, Floor 1', status:'Operational', calibStatus:'calibrated', lastCal:'20 Jun 2026', nextCal:'20 Dec 2026', calibAccuracy:'99.0%', lastService:'20 Jun 2026', nextService:'20 Dec 2026', technician:'Technician A', temp:36.7, acc:99.0, stab:98.8, volt:120.3, errorCode:null },
+    { id:'PM-008', name:'Bedside Patient Monitor', type:'PATIENT MONITOR', dept:'ICU / Node-Beta', location:'ICU Bed 8', status:'Operational', calibStatus:'calibrated', lastCal:'12 Jul 2026', nextCal:'12 Jan 2027', calibAccuracy:'98.8%', lastService:'12 Jul 2026', nextService:'12 Jan 2027', technician:'Technician B', temp:36.8, acc:98.8, stab:98.6, volt:120.1, errorCode:null },
+    { id:'IP-009', name:'Syringe Infusion Pump', type:'INFUSION PUMP', dept:'ICU / Node-Beta', location:'ICU Bed 2', status:'Operational', calibStatus:'calibrated', lastCal:'18 Jul 2026', nextCal:'18 Jan 2027', calibAccuracy:'99.1%', lastService:'18 Jul 2026', nextService:'18 Jan 2027', technician:'Technician C', temp:36.6, acc:99.1, stab:99.0, volt:120.0, errorCode:null },
+    { id:'VENT-010', name:'Drager Ventilator XT', type:'VENTILATOR', dept:'ICU / Node-Beta', location:'OR Suite A', status:'Operational', calibStatus:'calibrated', lastCal:'02 Aug 2026', nextCal:'02 Feb 2027', calibAccuracy:'99.5%', lastService:'02 Aug 2026', nextService:'02 Feb 2027', technician:'Technician A', temp:36.9, acc:99.5, stab:99.3, volt:120.6, errorCode:null },
+    { id:'BA-011', name:'Hematology Blood Analyzer', type:'BLOOD ANALYZER', dept:'Lab / Node-Delta', location:'Lab Room 3', status:'Operational', calibStatus:'calibrated', lastCal:'25 Jul 2026', nextCal:'25 Jan 2027', calibAccuracy:'99.3%', lastService:'25 Jul 2026', nextService:'25 Jan 2027', technician:'Technician B', temp:36.5, acc:99.3, stab:99.1, volt:120.2, errorCode:null },
+    { id:'XRY-012', name:'Fixed X-Ray Station', type:'X-RAY MACHINE', dept:'Radiology / Node-Alpha', location:'X-Ray Room 1', status:'Operational', calibStatus:'calibrated', lastCal:'14 May 2026', nextCal:'14 Nov 2026', calibAccuracy:'98.6%', lastService:'14 May 2026', nextService:'14 Nov 2026', technician:'Technician C', temp:37.0, acc:98.6, stab:98.1, volt:120.4, errorCode:null },
+    { id:'ECG-013', name:'CardioScan 12-Channel', type:'ECG MACHINE', dept:'Cardiology / Node-Gamma', location:'Outpatient Dept', status:'Operational', calibStatus:'calibrated', lastCal:'10 Aug 2026', nextCal:'10 Feb 2027', calibAccuracy:'99.4%', lastService:'10 Aug 2026', nextService:'10 Feb 2027', technician:'Technician A', temp:36.8, acc:99.4, stab:99.2, volt:120.3, errorCode:null },
+    { id:'PM-014', name:'Wireless Patient Monitor', type:'PATIENT MONITOR', dept:'ICU / Node-Beta', location:'Stepdown Unit A', status:'Operational', calibStatus:'calibrated', lastCal:'08 Aug 2026', nextCal:'08 Feb 2027', calibAccuracy:'99.0%', lastService:'08 Aug 2026', nextService:'08 Feb 2027', technician:'Technician B', temp:36.7, acc:99.0, stab:98.9, volt:120.2, errorCode:null },
+    { id:'IP-015', name:'Dual Channel Infusion Pump', type:'INFUSION PUMP', dept:'Cardiology / Node-Gamma', location:'Ward B, Floor 2', status:'Operational', calibStatus:'calibrated', lastCal:'05 Jul 2026', nextCal:'05 Jan 2027', calibAccuracy:'98.9%', lastService:'05 Jul 2026', nextService:'05 Jan 2027', technician:'Technician C', temp:36.5, acc:98.9, stab:98.4, volt:120.1, errorCode:null },
+    { id:'VENT-016', name:'ResMed CPAP Clinical', type:'VENTILATOR', dept:'ICU / Node-Beta', location:'Sleep Lab', status:'Operational', calibStatus:'calibrated', lastCal:'18 Jun 2026', nextCal:'18 Dec 2026', calibAccuracy:'98.7%', lastService:'18 Jun 2026', nextService:'18 Dec 2026', technician:'Technician A', temp:36.6, acc:98.7, stab:98.5, volt:120.2, errorCode:null },
+    { id:'BA-017', name:'Coagulation Lab Analyzer', type:'BLOOD ANALYZER', dept:'Lab / Node-Delta', location:'Hematology Lab', status:'Operational', calibStatus:'calibrated', lastCal:'29 Jul 2026', nextCal:'29 Jan 2027', calibAccuracy:'99.2%', lastService:'29 Jul 2026', nextService:'29 Jan 2027', technician:'Technician B', temp:36.4, acc:99.2, stab:99.0, volt:120.3, errorCode:null },
+    { id:'XRY-018', name:'Dental Cone Beam X-Ray', type:'X-RAY MACHINE', dept:'Radiology / Node-Alpha', location:'Dental Suite', status:'Operational', calibStatus:'calibrated', lastCal:'22 May 2026', nextCal:'22 Nov 2026', calibAccuracy:'98.5%', lastService:'22 May 2026', nextService:'22 Nov 2026', technician:'Technician C', temp:36.9, acc:98.5, stab:98.2, volt:120.1, errorCode:null },
+    { id:'ECG-019', name:'Stress Test System', type:'ECG MACHINE', dept:'Cardiology / Node-Gamma', location:'Stress Lab', status:'Operational', calibStatus:'calibrated', lastCal:'11 Jul 2026', nextCal:'11 Jan 2027', calibAccuracy:'99.1%', lastService:'11 Jul 2026', nextService:'11 Jan 2027', technician:'Technician A', temp:36.8, acc:99.1, stab:98.9, volt:120.4, errorCode:null },
+    { id:'PM-020', name:'Neonatal Patient Monitor', type:'PATIENT MONITOR', dept:'ICU / Node-Beta', location:'NICU Bed 4', status:'Operational', calibStatus:'calibrated', lastCal:'03 Aug 2026', nextCal:'03 Feb 2027', calibAccuracy:'99.3%', lastService:'03 Aug 2026', nextService:'03 Feb 2027', technician:'Technician B', temp:36.8, acc:99.3, stab:99.1, volt:120.5, errorCode:null },
+    { id:'IP-021', name:'Volumetric Infusion Pump', type:'INFUSION PUMP', dept:'Radiology / Node-Alpha', location:'CT Scan Suite', status:'Operational', calibStatus:'calibrated', lastCal:'17 Jul 2026', nextCal:'17 Jan 2027', calibAccuracy:'99.0%', lastService:'17 Jul 2026', nextService:'17 Jan 2027', technician:'Technician C', temp:36.5, acc:99.0, stab:98.8, volt:120.0, errorCode:null },
+    { id:'VENT-022', name:'Neonatal Ventilator', type:'VENTILATOR', dept:'ICU / Node-Beta', location:'NICU Bed 1', status:'Operational', calibStatus:'calibrated', lastCal:'26 Jul 2026', nextCal:'26 Jan 2027', calibAccuracy:'99.4%', lastService:'26 Jul 2026', nextService:'26 Jan 2027', technician:'Technician A', temp:36.9, acc:99.4, stab:99.2, volt:120.6, errorCode:null },
+    { id:'BA-023', name:'Urinalysis Lab Reader', type:'BLOOD ANALYZER', dept:'Lab / Node-Delta', location:'Lab Room 1', status:'Operational', calibStatus:'calibrated', lastCal:'30 Jul 2026', nextCal:'30 Jan 2027', calibAccuracy:'99.1%', lastService:'30 Jul 2026', nextService:'30 Jan 2027', technician:'Technician B', temp:36.5, acc:99.1, stab:98.7, volt:120.2, errorCode:null },
+    { id:'XRY-024', name:'Mammography Unit', type:'X-RAY MACHINE', dept:'Radiology / Node-Alpha', location:'Women Center', status:'Operational', calibStatus:'calibrated', lastCal:'07 Jun 2026', nextCal:'07 Dec 2026', calibAccuracy:'98.8%', lastService:'07 Jun 2026', nextService:'07 Dec 2026', technician:'Technician C', temp:37.1, acc:98.8, stab:98.5, volt:120.4, errorCode:null }
+  ],
+  chatMessages: [
+    { role:'bot', text:`🤖 **MedAI Compliance Agent Active**\n\nClinical Calibration Registry database loaded. How can I assist you with clinical calibrations, device drift models, or compliance validation reports today?` }
+  ],
+  feedbackReports: [
+    { email: 'admin@hospital.com', device: 'MRI-77B', category: 'Calibration Verification', rating: '5', text: 'Helium pressure tests confirm standard homogeneity tolerances within < 0.2 ppm compliance thresholds.', timestamp: '1h ago' },
+    { email: 'lead.biomed@hospital.com', device: 'VENT-102', category: 'Accuracy Deviation', rating: '4', text: 'Oxygen delivery values aligned with flow analyzer benchmarks after sensor grid maintenance.', timestamp: '3h ago' }
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════════════
+//  TELEMETRY BUFFER ARRAYS (30-60 Recent points)
+// ═══════════════════════════════════════════════════════════════════
+const maxPoints = 40;
+const telemetryStreams = {
+  temp: Array.from({length: maxPoints}, () => 36.8 + (Math.random() - 0.5) * 0.4),
+  acc: Array.from({length: maxPoints}, () => 99.2 + (Math.random() - 0.5) * 0.3),
+  stab: Array.from({length: maxPoints}, () => 98.7 + (Math.random() - 0.5) * 0.5),
+  volt: Array.from({length: maxPoints}, () => 120.4 + (Math.random() - 0.5) * 0.8)
+};
+
+// ═══════════════════════════════════════════════════════════════════
+//  VIEW RENDERERS
+// ═══════════════════════════════════════════════════════════════════
+function renderDashboard() {
+  const total = STATE.devices.length;
+  const operational = STATE.devices.filter(d => d.status === 'Operational').length;
+  const calibDue = STATE.devices.filter(d => d.calibStatus === 'overdue' || d.calibStatus === 'duesoon').length;
+  const maintDue = STATE.devices.filter(d => d.status.includes('Maintenance')).length;
+  const complianceScore = ((STATE.devices.filter(d => d.calibStatus !== 'overdue').length + STATE.devices.filter(d => d.status !== 'Maintenance Required').length) / (total * 2) * 100).toFixed(1);
+
+  return `
+  <!-- Compliance Focus Statement -->
+  <div style="background:rgba(0, 242, 254, 0.03); border:1px solid var(--border-neon); border-radius:10px; padding:18px 24px; margin-bottom:20px;">
+    <h3 style="font-family:var(--font-sans); font-size:13px; font-weight:700; color:#fff; letter-spacing:0.02em; line-height:1.45;">
+      📋 Clinical Requirement: Hospitals and laboratories must regularly calibrate biomedical devices and maintain maintenance records to comply with regulatory standards.
+    </h3>
+  </div>
+
+  <!-- Summary Cards (State-driven) -->
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:16px; margin-bottom:20px;">
+    <div class="panel-card" style="display:flex; flex-direction:column; justify-content:center;">
+      <div style="font-family:var(--font-mono); font-size:9px; color:var(--text-dim); text-transform:uppercase;">TOTAL DEVICES</div>
+      <div style="font-family:var(--font-display); font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${total}</div>
+    </div>
+    <div class="panel-card" style="display:flex; flex-direction:column; justify-content:center;">
+      <div style="font-family:var(--font-mono); font-size:9px; color:var(--neon-green); text-transform:uppercase;">OPERATIONAL</div>
+      <div style="font-family:var(--font-display); font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${operational}</div>
+    </div>
+    <div class="panel-card" style="display:flex; flex-direction:column; justify-content:center;">
+      <div style="font-family:var(--font-mono); font-size:9px; color:var(--neon-amber); text-transform:uppercase;">CALIBRATION DUE</div>
+      <div style="font-family:var(--font-display); font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${calibDue}</div>
+    </div>
+    <div class="panel-card" style="display:flex; flex-direction:column; justify-content:center;">
+      <div style="font-family:var(--font-mono); font-size:9px; color:var(--neon-pink); text-transform:uppercase;">MAINTENANCE DUE</div>
+      <div style="font-family:var(--font-display); font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${maintDue}</div>
+    </div>
+    <div class="panel-card" style="display:flex; flex-direction:column; justify-content:center;">
+      <div style="font-family:var(--font-mono); font-size:9px; color:var(--neon-cyan); text-transform:uppercase;">COMPLIANCE SCORE</div>
+      <div style="font-family:var(--font-display); font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${complianceScore}%</div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid-layout">
+    
+    <!-- Central Network Visualization Panel -->
+    <div class="panel-card" style="display:flex; flex-direction:column; gap:14px; position:relative;">
+      <div class="panel-header">
+        <div class="panel-title">BIOMEDICAL DEVICE NETWORK</div>
+        <div class="panel-controls" style="font-family:var(--font-mono); font-size:9px; color:var(--text-muted);">
+          HOVER FOR TOOLTIP | CLICK TO DIAGNOSE
+        </div>
+      </div>
+      <div class="net-visualizer-container" id="netVisualizerWrap">
+        <canvas class="net-canvas" id="networkCanvas"></canvas>
+        
+        <!-- Hover Tooltip overlay card -->
+        <div id="deviceTooltip" style="position:absolute; display:none; background:rgba(6, 9, 13, 0.95); border:1px solid var(--border-neon); border-radius:8px; padding:12px; font-size:11px; z-index:100; pointer-events:none; backdrop-filter:blur(8px); box-shadow:0 0 15px rgba(0, 242, 254, 0.2); width:200px; text-align:left;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side Sidebar alerts -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      
+      <!-- Critical Anomalies -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title" style="color:var(--neon-pink);">CRITICAL ANOMALIES</div>
+        </div>
+        <div class="anomalies-container">
+          <div class="anomaly-item" style="cursor:pointer;" onclick="openDeviceDiagnostics('PM-004')" title="Diagnose Patient Monitor">
+            <div>
+              <strong>THERMAL VARIANCE</strong><br/>
+              <span style="font-size:9px; color:var(--text-muted); font-family:var(--font-mono);">Device: Patient Monitor-04</span>
+            </div>
+            <span style="color:var(--neon-pink); font-family:var(--font-mono); font-size:10px; font-weight:700;">DETECTED</span>
+          </div>
+          <div class="anomaly-item" style="cursor:pointer;" onclick="openDeviceDiagnostics('XRY-004')" title="Diagnose Mobile X-Ray">
+            <div>
+              <strong>CALIBRATION OVERDUE</strong><br/>
+              <span style="font-size:9px; color:var(--text-muted); font-family:var(--font-mono);">Device: XRY-04</span>
+            </div>
+            <span style="color:var(--neon-pink); font-family:var(--font-mono); font-size:10px; font-weight:700;">WARNING</span>
+          </div>
+          <div class="anomaly-item" style="cursor:pointer;" onclick="openDeviceDiagnostics('ECG-001')" title="Diagnose ECG Alpha">
+            <div>
+              <strong>SIGNAL INSTABILITY</strong><br/>
+              <span style="font-size:9px; color:var(--text-muted); font-family:var(--font-mono);">Device: ECG-001</span>
+            </div>
+            <span style="color:var(--neon-amber); font-family:var(--font-mono); font-size:10px; font-weight:700;">WARNING</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regulatory Compliance Card -->
+      <div class="panel-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div class="panel-header">
+          <div class="panel-title">REGULATORY COMPLIANCE</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:4px;">
+          <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span style="color:var(--text-muted);">Compliance Score:</span>
+            <strong style="color:var(--neon-cyan);">${complianceScore}%</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span style="color:var(--text-muted);">Calibration Records:</span>
+            <strong>${STATE.devices.filter(d=>d.calibStatus!=='overdue').length} / ${total}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span style="color:var(--text-muted);">Maintenance Records:</span>
+            <strong>${STATE.devices.filter(d=>d.status!=='Maintenance Required').length} / ${total}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span style="color:var(--text-muted);">Audit Status:</span>
+            <strong style="color:var(--neon-green);">PASS</strong>
+          </div>
+          <div class="sync-progress-container" style="height:6px; margin-top:4px;">
+            <div class="sync-progress-bar" style="width: ${complianceScore}%; background:var(--neon-green); box-shadow: 0 0 6px var(--neon-green);"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Telemetry Row at bottom (4 Time-Series Charts) -->
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-top:20px;">
+    <div class="telemetry-chart-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-family:var(--font-mono); font-size:9px; color:var(--neon-cyan); font-weight:700;">TELEMETRY A: TEMPERATURE</span>
+        <span style="font-family:var(--font-mono); font-size:11px; color:#fff;" id="telValA">0.0°C</span>
+      </div>
+      <canvas class="tel-canvas" id="canvasTelA"></canvas>
+    </div>
+    <div class="telemetry-chart-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-family:var(--font-mono); font-size:9px; color:var(--neon-purple); font-weight:700;">TELEMETRY B: ACCURACY</span>
+        <span style="font-family:var(--font-mono); font-size:11px; color:#fff;" id="telValB">0.0%</span>
+      </div>
+      <canvas class="tel-canvas" id="canvasTelB"></canvas>
+    </div>
+    <div class="telemetry-chart-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-family:var(--font-mono); font-size:9px; color:var(--neon-green); font-weight:700;">TELEMETRY C: STABILITY</span>
+        <span style="font-family:var(--font-mono); font-size:11px; color:#fff;" id="telValC">0.0%</span>
+      </div>
+      <canvas class="tel-canvas" id="canvasTelC"></canvas>
+    </div>
+    <div class="telemetry-chart-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-family:var(--font-mono); font-size:9px; color:var(--neon-amber); font-weight:700;">TELEMETRY D: POWER/VOLTAGE</span>
+        <span style="font-family:var(--font-mono); font-size:11px; color:#fff;" id="telValD">0.0V</span>
+      </div>
+      <canvas class="tel-canvas" id="canvasTelD"></canvas>
+    </div>
+  </div>
+  `;
+}
+
+function renderDevices() {
+  let query = STATE.searchQuery.toLowerCase();
+  let filtered = STATE.devices.filter(d => {
+    let matchQuery = d.id.toLowerCase().includes(query) ||
+                     d.name.toLowerCase().includes(query) ||
+                     d.type.toLowerCase().includes(query) ||
+                     d.status.toLowerCase().includes(query);
+    
+    if (STATE.filterStatus === 'ALL') return matchQuery;
+    if (STATE.filterStatus === 'OPERATIONAL') return matchQuery && d.status === 'Operational';
+    if (STATE.filterStatus === 'CALIBRATION DUE') return matchQuery && d.status === 'Calibration Due';
+    if (STATE.filterStatus === 'OVERDUE') return matchQuery && d.calibStatus === 'overdue';
+    if (STATE.filterStatus === 'MAINTENANCE DUE') return matchQuery && d.status.includes('Maintenance');
+    return matchQuery;
+  });
+
+  return `
+  <div class="page-hero">
+    <div class="hero-title">
+      <h2>Biomedical Device Inventory</h2>
+      <div class="node-tag">Search and filter active device nodes on compliance registries.</div>
+    </div>
+    <button class="neural-sync-btn" onclick="showAddDeviceModal()">
+      + REGISTER DEVICE
+    </button>
+  </div>
+
+  <!-- Search and filter control panel -->
+  <div class="panel-card" style="margin-bottom:20px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;">
+    <div style="display:flex; gap:8px;">
+      <button class="sb-sync-btn ${STATE.filterStatus==='ALL'?'active':''}" style="margin:0;" onclick="setDeviceFilter('ALL')">ALL</button>
+      <button class="sb-sync-btn ${STATE.filterStatus==='OPERATIONAL'?'active':''}" style="margin:0;" onclick="setDeviceFilter('OPERATIONAL')">OPERATIONAL</button>
+      <button class="sb-sync-btn ${STATE.filterStatus==='CALIBRATION DUE'?'active':''}" style="margin:0;" onclick="setDeviceFilter('CALIBRATION DUE')">CALIB DUE</button>
+      <button class="sb-sync-btn ${STATE.filterStatus==='OVERDUE'?'active':''}" style="margin:0;" onclick="setDeviceFilter('OVERDUE')">OVERDUE</button>
+      <button class="sb-sync-btn ${STATE.filterStatus==='MAINTENANCE DUE'?'active':''}" style="margin:0;" onclick="setDeviceFilter('MAINTENANCE DUE')">MAINT DUE</button>
+    </div>
+  </div>
+
+  <div class="devices-grid-stage">
+    ${filtered.map(d => `
+      <div class="dt-card" style="cursor:pointer;" onclick="if(!event.target.closest('button')) openDeviceDiagnostics('${d.id}')">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <h3 style="font-size:13px; font-weight:800; color:#fff;">${d.name}</h3>
+            <span style="font-family:var(--font-mono); font-size:9px; color:var(--neon-cyan);">${d.id}</span>
+          </div>
+          <span class="badge-neon ${d.status === 'Operational' ? 'online' : d.status.includes('Due') ? 'duesoon' : 'overdue'}">
+            ${d.status.toUpperCase()}
+          </span>
+        </div>
+        
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-dim); border-radius:6px; padding:10px; font-size:11px;">
+          <div class="dt-row"><span>Type:</span><span>${d.type}</span></div>
+          <div class="dt-row"><span>Dept:</span><span>${d.dept}</span></div>
+          <div class="dt-row"><span>Last Calib:</span><span>${d.lastCal}</span></div>
+          <div class="dt-row"><span>Accuracy:</span><span style="color:var(--neon-cyan);">${d.calibAccuracy}</span></div>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:auto;">
+          <button class="sb-sync-btn" style="flex:1; margin:0; font-size:9px;" onclick="calibrateDevice('${d.id}')">
+            CALIBRATE
+          </button>
+          <button class="sb-sync-btn" style="margin:0; font-size:9px; color:#fff; border-color:var(--border-dim);" onclick="editDeviceNode('${d.id}')">
+            EDIT
+          </button>
+          <button class="sb-sync-btn" style="margin:0; font-size:9px; color:var(--neon-pink); border-color:var(--neon-pink);" onclick="deleteDeviceNode('${d.id}')">
+            DEL
+          </button>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+  `;
+}
+
+function renderCalibration() {
+  const calibrated = STATE.devices.filter(d => d.calibStatus === 'calibrated').length;
+  const duesoon = STATE.devices.filter(d => d.calibStatus === 'duesoon').length;
+  const overdue = STATE.devices.filter(d => d.calibStatus === 'overdue').length;
+
+  return `
+  <div class="page-hero">
+    <div class="hero-title">
+      <h2>Calibration Registry Panel</h2>
+      <div class="node-tag">Compliance certificates and calibration records audit log.</div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; margin-bottom:20px;">
+    <div class="panel-card" style="text-align:center;">
+      <span style="font-family:var(--font-mono); font-size:8px; color:var(--neon-green);">CALIBRATED</span>
+      <div style="font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${calibrated}</div>
+    </div>
+    <div class="panel-card" style="text-align:center;">
+      <span style="font-family:var(--font-mono); font-size:8px; color:var(--neon-amber);">DUE SOON</span>
+      <div style="font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${duesoon}</div>
+    </div>
+    <div class="panel-card" style="text-align:center;">
+      <span style="font-family:var(--font-mono); font-size:8px; color:var(--neon-pink);">OVERDUE</span>
+      <div style="font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${overdue}</div>
+    </div>
+  </div>
+
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">CALIBRATION STATUS TABLE</div>
+      <button class="sb-sync-btn" style="margin:0;" onclick="exportDataLogs()">
+        EXPORT AUDIT LOG
+      </button>
+    </div>
+    <div class="table-responsive">
+      <table class="cyber-table">
+        <thead>
+          <tr>
+            <th>DEVICE ID</th>
+            <th>TYPE</th>
+            <th>LAST CALIBRATION</th>
+            <th>NEXT DUE</th>
+            <th>ACCURACY</th>
+            <th>STATUS</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${STATE.devices.map(d => `
+            <tr>
+              <td class="device-id-cell" onclick="openDeviceDiagnostics('${d.id}')">${d.id}</td>
+              <td><strong>${d.type}</strong><br/><span style="font-size:10px; color:var(--text-muted);">${d.name}</span></td>
+              <td>${d.lastCal}</td>
+              <td>${d.nextCal}</td>
+              <td style="font-family:var(--font-mono); color:var(--neon-cyan);">${d.calibAccuracy}</td>
+              <td>
+                <span class="badge-neon ${d.calibStatus}">
+                  ${d.calibStatus.toUpperCase()}
+                </span>
+              </td>
+              <td>
+                <button class="sb-sync-btn" style="margin:0; padding:6px 14px; font-size:9px;" onclick="calibrateDevice('${d.id}')">
+                  CALIBRATE
+                </button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  `;
+}
+
+function renderMaintenance() {
+  const uptodate = STATE.devices.filter(d => d.status === 'Operational').length;
+  const duesoon = STATE.devices.filter(d => d.status === 'Calibration Due').length;
+  const overdue = STATE.devices.filter(d => d.status.includes('Maintenance')).length;
+
+  return `
+  <div class="page-hero">
+    <div class="hero-title">
+      <h2>Biomedical Maintenance Status</h2>
+      <div class="node-tag">Manage preventive maintenance schedules, technicians, and equipment parameters.</div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; margin-bottom:20px;">
+    <div class="panel-card" style="text-align:center;">
+      <span style="font-family:var(--font-mono); font-size:8px; color:var(--neon-green);">UP TO DATE</span>
+      <div style="font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${uptodate}</div>
+    </div>
+    <div class="panel-card" style="text-align:center;">
+      <span style="font-family:var(--font-mono); font-size:8px; color:var(--neon-amber);">DUE SOON</span>
+      <div style="font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${duesoon}</div>
+    </div>
+    <div class="panel-card" style="text-align:center;">
+      <span style="font-family:var(--font-mono); font-size:8px; color:var(--neon-pink);">OVERDUE</span>
+      <div style="font-size:24px; font-weight:900; color:#fff; margin-top:4px;">${overdue}</div>
+    </div>
+  </div>
+
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">MAINTENANCE SCHEDULER</div>
+    </div>
+    <div class="table-responsive">
+      <table class="cyber-table">
+        <thead>
+          <tr>
+            <th>DEVICE ID</th>
+            <th>LAST SERVICE</th>
+            <th>NEXT SERVICE</th>
+            <th>TECHNICIAN</th>
+            <th>STATUS</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${STATE.devices.map(d => `
+            <tr>
+              <td class="device-id-cell" onclick="openDeviceDiagnostics('${d.id}')">${d.id}</td>
+              <td>${d.lastService}</td>
+              <td>${d.nextService}</td>
+              <td><span style="font-family:var(--font-mono);">${d.technician}</span></td>
+              <td>
+                <span class="badge-neon ${d.status === 'Operational' ? 'online' : 'overdue'}">
+                  ${d.status === 'Operational' ? 'UP TO DATE' : 'DUE'}
+                </span>
+              </td>
+              <td>
+                <button class="sb-sync-btn" style="margin:0; padding:6px 14px; font-size:9px;" onclick="serviceDevice('${d.id}')">
+                  SERVICE
+                </button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  `;
+}
+
+function renderCompliance() {
+  const total = STATE.devices.length;
+  const complianceScore = ((STATE.devices.filter(d => d.calibStatus !== 'overdue').length + STATE.devices.filter(d => d.status !== 'Maintenance Required').length) / (total * 2) * 100).toFixed(1);
+
+  return `
+  <div class="page-hero">
+    <div class="hero-title">
+      <h2>Regulatory Compliance Monitoring</h2>
+      <div class="node-tag">Compliance scores, verification reports, and ISO compliance logs.</div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid-layout">
+    
+    <div class="panel-card" style="display:flex; flex-direction:column; justify-content:center;">
+      <div class="panel-header">
+        <div class="panel-title">REGULATORY SCORECARD</div>
+      </div>
+      <div style="text-align:center; padding:20px 0;">
+        <span style="font-size:12px; color:var(--text-muted); font-family:var(--font-mono);">SCORE RATIO</span>
+        <div style="font-size:42px; font-weight:900; color:var(--neon-green); font-family:var(--font-display);">${complianceScore}%</div>
+        <div class="sync-progress-container" style="height:8px; max-width:280px; margin:16px auto 0;">
+          <div class="sync-progress-bar" style="width:${complianceScore}%; background:var(--neon-green); box-shadow:0 0 8px var(--neon-green);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-card" style="display:flex; flex-direction:column; gap:12px;">
+      <div class="panel-header">
+        <div class="panel-title">REGULATORY REQUIREMENTS CHECKS</div>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); line-height:1.6; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-dim); padding-bottom:6px;">
+          <span>ISO 13485 (Medical Devices Quality)</span>
+          <strong style="color:var(--neon-green);">PASS</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-dim); padding-bottom:6px;">
+          <span>IEC 60601 (Electrical Safety Checks)</span>
+          <strong style="color:var(--neon-green);">PASS</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-dim); padding-bottom:6px;">
+          <span>FDA 21 CFR Part 820 Compliance</span>
+          <strong style="color:var(--neon-green);">PASS</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding-bottom:4px;">
+          <span>Annual Compliance Audit</span>
+          <strong style="color:var(--neon-green);">PASS</strong>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="panel-card" style="margin-top:20px;">
+    <div class="panel-header">
+      <div class="panel-title">MAINTENANCE SERVICE HISTORY LOG</div>
+    </div>
+    <div class="table-responsive">
+      <table class="cyber-table">
+        <thead>
+          <tr>
+            <th>DEVICE ID</th>
+            <th>DATE</th>
+            <th>SERVICE TYPE</th>
+            <th>TECHNICIAN</th>
+            <th>NOTES</th>
+            <th>NEXT MAINTENANCE</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${STATE.devices.map(d => `
+            <tr>
+              <td class="device-id-cell" onclick="openDeviceDiagnostics('${d.id}')">${d.id}</td>
+              <td>${d.lastService}</td>
+              <td>Preventive Maintenance</td>
+              <td><span style="font-family:var(--font-mono);">${d.technician}</span></td>
+              <td>Signal accuracy alignment and flow verification completed successfully.</td>
+              <td>${d.nextService}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  `;
+}
+
+function renderMedia() {
+  return `
+  <div class="page-hero">
+    <div class="hero-title">
+      <h2>MedAI Neural Copilot</h2>
+      <div class="node-tag">Clinical intelligence assistant powered by OpenAI & Gemini.</div>
+    </div>
+  </div>
+
+  <div class="agent-stage">
+    <div class="agent-sidebar">
+      <div style="text-align:center; padding-bottom:12px; border-bottom:1px solid var(--border-dim);">
+        <div class="agent-orb"></div>
+        <strong style="font-family:var(--font-display); font-size:12px;">MEDAI SYSTEM NODE</strong>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.5;">
+        Instruct MedAI to inspect telemetry logs, forecast drift, or build calibration procedures.
+      </div>
+      <div style="font-family:var(--font-mono); font-size:8px; color:var(--text-dim); text-transform:uppercase; margin-top:10px;">PROMPTS</div>
+      <button class="sb-sync-btn" style="margin:0; font-size:9px; text-align:left; justify-content:flex-start;" onclick="sendAgentPrompt('name the calibrated devices')">
+        📐 Name Calibrated Devices
+      </button>
+      <button class="sb-sync-btn" style="margin:0; font-size:9px; text-align:left; justify-content:flex-start;" onclick="sendAgentPrompt('show critical anomalies')">
+        🚨 Show System Overdue
+      </button>
+      <button class="sb-sync-btn" style="margin:0; font-size:9px; text-align:left; justify-content:flex-start;" onclick="sendAgentPrompt('how to calibrate Siemens XT-900 MRI')">
+        🧲 Siemens MRI Protocol
+      </button>
+    </div>
+
+    <div class="panel-card" style="display:flex; flex-direction:column; overflow:hidden; padding:0;">
+      <div class="agent-messages" id="agentMsgsBox">
+        ${STATE.chatMessages.map(m => `
+          <div class="agent-bubble ${m.role}">
+            ${m.text.replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+          </div>
+        `).join('')}
+      </div>
+      <div style="padding:14px; border-top:1px solid var(--border-dim); background:rgba(0,0,0,0.2); display:flex; gap:12px; align-items:center;">
+        <input class="agent-prompt-input" style="flex:1; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid var(--border-dim); border-radius:6px; color:#fff; font-size:12px; outline:none;" id="agentPromptInput" placeholder="Enter query..." onkeydown="if(event.key==='Enter')handleAgentSubmit()"/>
+        <button class="neural-sync-btn" onclick="handleAgentSubmit()">TRANSMIT</button>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function renderFeedback() {
+  return `
+  <div class="page-hero">
+    <div class="hero-title">
+      <h2>Calibration Feedback Center</h2>
+      <div class="node-tag">Log operator suggestions, submit verification feedback, and report accuracy anomalies.</div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid-layout">
+    
+    <!-- Submission Form -->
+    <div class="panel-card">
+      <div class="panel-header">
+        <div class="panel-title">SUBMIT CALIBRATION REPORT</div>
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap:16px; margin-top:14px;">
+        <div style="display:block; width:100%;">
+          <label class="login-label">Operator Signature Email</label>
+          <input class="login-input" id="feedback-email" value="admin@hospital.com"/>
+        </div>
+        <div style="display:block; width:100%;">
+          <label class="login-label">Target Device Node</label>
+          <select class="login-input" id="feedback-device">
+            ${STATE.devices.map(d => `<option value="${d.id}">${d.name} (${d.id})</option>`).join('')}
+          </select>
+        </div>
+        <div style="display:block; width:100%;">
+          <label class="login-label">Report Category</label>
+          <select class="login-input" id="feedback-category">
+            <option value="Calibration Verification">Calibration Verification</option>
+            <option value="Accuracy Deviation">Accuracy Deviation</option>
+            <option value="Compliance Audit Feedback">Compliance Audit Feedback</option>
+            <option value="General System Suggestion">General System Suggestion</option>
+          </select>
+        </div>
+        <div style="display:block; width:100%;">
+          <label class="login-label">Compliance Satisfaction Rating</label>
+          <select class="login-input" id="feedback-rating" style="color:var(--neon-amber);">
+            <option value="5">⭐⭐⭐⭐⭐ Excellent Accuracy</option>
+            <option value="4">⭐⭐⭐⭐ Satisfactory Calibration</option>
+            <option value="3">⭐⭐⭐ Minor Drift Observed</option>
+            <option value="2">⭐⭐ Unstable Frequency Response</option>
+            <option value="1">⭐ Critical Tolerance Fault</option>
+          </select>
+        </div>
+        <div style="display:block; width:100%;">
+          <label class="login-label">Operator Observations / Comments</label>
+          <textarea class="login-input" id="feedback-text" rows="3" placeholder="Describe the physical state, certified standards compliance, or any corrective actions taken..."></textarea>
+        </div>
+        
+        <button class="neural-sync-btn" style="margin-top:8px; justify-content:center;" onclick="submitFeedbackReport()">
+          📤 TRANSMIT REPORT
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Reports Log -->
+    <div class="panel-card" style="display:flex; flex-direction:column; gap:14px;">
+      <div class="panel-header">
+        <div class="panel-title">ACTIVE COMPLIANCE LOGS</div>
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap:12px; overflow-y:auto; max-height:420px;" id="feedbackLogsBox">
+        ${STATE.feedbackReports.map(f => `
+          <div style="background:var(--bg-card-sub); border:1px solid var(--border-dim); border-radius:8px; padding:12px; font-size:11px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-family:var(--font-mono); color:var(--neon-cyan);">${f.device}</span>
+              <span style="color:var(--neon-amber);">${'⭐'.repeat(parseInt(f.rating))}</span>
+            </div>
+            <div style="font-weight:700; color:#fff; margin-bottom:4px;">${f.category}</div>
+            <p style="color:var(--text-muted); line-height:1.4; margin-bottom:6px;">${f.text}</p>
+            <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-dim);">
+              <span>By: ${f.email}</span>
+              <span>${f.timestamp}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+  </div>
+  `;
+}
+
+function renderSupport() {
+  return `
+  <div class="page-hero">
+    <div class="hero-title">
+      <h2>Engineering Support</h2>
+      <div class="node-tag">Direct link to Sector 7 field engineering coordinators.</div>
+    </div>
+  </div>
+
+  <div class="panel-card" style="max-width:600px;">
+    <div class="panel-header">
+      <div class="panel-title">SYSTEM ASSISTANCE</div>
+    </div>
+    <div style="font-size:13px; line-height:1.6; color:var(--text-muted); display:flex; flex-direction:column; gap:12px;">
+      <p>Need support on clinical equipment nodes, certification criteria, or network visualizer anomalies?</p>
+      <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-dim); border-radius:6px; padding:14px; font-family:var(--font-mono); font-size:11px; color:var(--neon-cyan);">
+        📟 Pager dispatch: Sector 7 Command (Ext 4099)<br/>
+        📡 Telemetry Sync Port: 8080 (Operational)<br/>
+        🏥 Center coordinator email: lead.biomed@hospital.com
+      </div>
+      <button class="neural-sync-btn" style="width:fit-content; margin-top:8px;" onclick="showToast('Coordinators notified via telemetry pipeline')">
+        DISPATCH COORDINATORS
+      </button>
+    </div>
+  </div>
+  `;
+}
+
+function renderLogs() {
+  return `
+  <div class="page-hero">
+    <div class="hero-title">
+      <h2>System Logs</h2>
+      <div class="node-tag">Operator logs, telemetry exports, and audit trails.</div>
+    </div>
+  </div>
+
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">AUDIT EXPORT OPTIONS</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <p style="font-size:12px; color:var(--text-muted);">Download system logs and device configurations for regulatory ISO auditing compliance.</p>
+      <div style="display:flex; gap:10px;">
+        <button class="neural-sync-btn" onclick="exportDataLogs()">
+          📥 DOWNLOAD NODE AUDIT CSV
+        </button>
+        <button class="sb-sync-btn" style="margin:0;" onclick="showToast('Diagnostic log dump generated successfully.')">
+          📋 DIAGNOSTIC LOG DUMP
+        </button>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TAB NAVIGATION ROUTER
+// ═══════════════════════════════════════════════════════════════════
+function switchTab(tabName) {
+  STATE.currentTab = tabName;
+  stopCanvasAnimations();
+
+  document.querySelectorAll('.nav-link').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick')?.includes(tabName));
+  });
+
+  document.querySelectorAll('.m-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.id === `mTab-${tabName}`);
+  });
+
+  const workspace = document.getElementById('workspaceContent');
+  if (tabName === 'dashboard') {
+    workspace.innerHTML = renderDashboard();
+    initDashboardCanvas();
+    initNetworkCanvasNodes();
+  } else if (tabName === 'devices') {
+    workspace.innerHTML = renderDevices();
+  } else if (tabName === 'calibration') {
+    workspace.innerHTML = renderCalibration();
+  } else if (tabName === 'maintenance') {
+    workspace.innerHTML = renderMaintenance();
+  } else if (tabName === 'compliance') {
+    workspace.innerHTML = renderCompliance();
+  } else if (tabName === 'media') {
+    workspace.innerHTML = renderMedia();
+  } else if (tabName === 'feedback') {
+    workspace.innerHTML = renderFeedback();
+  } else if (tabName === 'support') {
+    workspace.innerHTML = renderSupport();
+  } else if (tabName === 'logs') {
+    workspace.innerHTML = renderLogs();
+  }
+
+  document.getElementById('appSidebar')?.classList.remove('open');
+}
+
+function toggleMobileSidebar() {
+  document.getElementById('appSidebar')?.classList.toggle('open');
+}
+
+function handleSearch(val) {
+  STATE.searchQuery = val;
+  if (STATE.currentTab === 'devices') {
+    document.getElementById('workspaceContent').innerHTML = renderDevices();
+  }
+}
+
+function setDeviceFilter(status) {
+  STATE.filterStatus = status;
+  if (STATE.currentTab === 'devices') {
+    document.getElementById('workspaceContent').innerHTML = renderDevices();
+  }
+}
+
+function triggerSystemSync() {
+  showToast('🔄 Executing System Sync across Sector 7 Command Nodes...');
+  setTimeout(() => {
+    showToast('✅ Neural Node alignment verified (All metrics stable)');
+  }, 700);
+}
+
+function calibrateDevice(devId) {
+  const d = STATE.devices.find(x => x.id === devId);
+  if (!d) return;
+  d.calibStatus = 'calibrated';
+  d.status = 'Operational';
+  d.lastCal = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  d.errorCode = null;
+  d.calibAccuracy = (99.0 + Math.random() * 0.9).toFixed(1) + '%';
+  showToast(`✅ ${d.name} successfully calibrated!`);
+  switchTab(STATE.currentTab);
+}
+
+function serviceDevice(devId) {
+  const d = STATE.devices.find(x => x.id === devId);
+  if (!d) return;
+  d.status = 'Operational';
+  d.lastService = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  d.nextService = new Date(Date.now() + 90*24*60*60*1000).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  showToast(`🔧 PM Service completed on ${d.name}`);
+  switchTab(STATE.currentTab);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  DIAGNOSTICS & DETAILS VIEW OVERLAYS
+// ═══════════════════════════════════════════════════════════════════
+function openDeviceDiagnostics(devId) {
+  STATE.selectedDeviceId = devId;
+  const d = STATE.devices.find(x => x.id === devId);
+  if (!d) return;
+
+  const modal = document.getElementById('deviceDetailsModal');
+  const title = document.getElementById('detModalTitle');
+  const content = document.getElementById('detModalContent');
+  if(!modal || !title || !content) return;
+
+  title.textContent = `DIAGNOSTICS: ${d.name} [${d.id}]`;
+  content.innerHTML = `
+    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:20px;">
+      
+      <!-- Device Metrics -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <h4 style="font-family:var(--font-display); font-size:11px; color:var(--neon-cyan); border-bottom:1px solid var(--border-dim); padding-bottom:4px;">DEVICE PROPERTIES</h4>
+        <div style="font-size:11px; display:flex; flex-direction:column; gap:6px;">
+          <div class="dt-row"><span>Device Model:</span><strong>${d.name}</strong></div>
+          <div class="dt-row"><span>Type Category:</span><span>${d.type}</span></div>
+          <div class="dt-row"><span>Compliance Status:</span><span style="color:var(--neon-cyan);">${d.status}</span></div>
+          <div class="dt-row"><span>Deployment Location:</span><span>${d.location}</span></div>
+          <div class="dt-row"><span>ISO Department:</span><span>${d.dept}</span></div>
+        </div>
+
+        <h4 style="font-family:var(--font-display); font-size:11px; color:var(--neon-cyan); border-bottom:1px solid var(--border-dim); padding-bottom:4px; margin-top:8px;">CALIBRATION & COMPLIANCE</h4>
+        <div style="font-size:11px; display:flex; flex-direction:column; gap:6px;">
+          <div class="dt-row"><span>Last Verified Calibration:</span><span>${d.lastCal}</span></div>
+          <div class="dt-row"><span>Next Verification Due:</span><span>${d.nextCal}</span></div>
+          <div class="dt-row"><span>Recorded Calibration Accuracy:</span><strong style="color:var(--neon-green);">${d.calibAccuracy}</strong></div>
+        </div>
+      </div>
+
+      <!-- Maintenance Logs & Actions -->
+      <div style="display:flex; flex-direction:column; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-dim); border-radius:8px; padding:12px;">
+        <h4 style="font-family:var(--font-display); font-size:11px; color:var(--neon-purple); border-bottom:1px solid var(--border-dim); padding-bottom:4px;">MAINTENANCE LOG</h4>
+        <div style="font-size:11px; display:flex; flex-direction:column; gap:6px;">
+          <div class="dt-row"><span>Last Service Date:</span><span>${d.lastService}</span></div>
+          <div class="dt-row"><span>Next PM Schedule:</span><span>${d.nextService}</span></div>
+          <div class="dt-row"><span>Assigned Coordinator:</span><span>${d.technician}</span></div>
+          <div class="dt-row"><span>Audit Status:</span><strong style="color:var(--neon-green);">VERIFIED</strong></div>
+        </div>
+
+        <div style="margin-top:auto; display:flex; flex-direction:column; gap:8px;">
+          <button class="login-btn" onclick="calibrateDevice('${d.id}'); closeDeviceDetailsModal();">CALIBRATE NOW</button>
+          <button class="sb-sync-btn" style="margin:0;" onclick="serviceDevice('${d.id}'); closeDeviceDetailsModal();">PM SERVICE NOW</button>
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  modal.classList.add('open');
+}
+
+function closeDeviceDetailsModal() {
+  document.getElementById('deviceDetailsModal')?.classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  DEVICE REGISTER ADD / EDIT / DELETE
+// ═══════════════════════════════════════════════════════════════════
+function showAddDeviceModal() {
+  document.getElementById('modalTitle').textContent = 'REGISTER NEW DEVICE';
+  document.getElementById('form-device-index').value = '';
+  document.getElementById('form-id').value = '';
+  document.getElementById('form-name').value = '';
+  document.getElementById('form-type').value = 'ECG MACHINE';
+  document.getElementById('form-dept').value = 'Radiology / Node-Alpha';
+  document.getElementById('form-location').value = '';
+  document.getElementById('form-p2').value = '99.2%';
+  document.getElementById('deviceModal').classList.add('open');
+}
+
+function editDeviceNode(devId) {
+  const d = STATE.devices.find(x => x.id === devId);
+  if(!d) return;
+  document.getElementById('modalTitle').textContent = 'EDIT DEVICE: ' + d.id;
+  document.getElementById('form-device-index').value = d.id;
+  document.getElementById('form-id').value = d.id;
+  document.getElementById('form-name').value = d.name;
+  document.getElementById('form-type').value = d.type;
+  document.getElementById('form-dept').value = d.dept;
+  document.getElementById('form-location').value = d.location;
+  document.getElementById('form-p2').value = d.calibAccuracy;
+  document.getElementById('deviceModal').classList.add('open');
+}
+
+function saveDeviceNode() {
+  const targetId = document.getElementById('form-device-index').value;
+  const devId = document.getElementById('form-id').value.trim();
+  const name = document.getElementById('form-name').value.trim();
+  const type = document.getElementById('form-type').value;
+  const dept = document.getElementById('form-dept').value;
+  const location = document.getElementById('form-location').value.trim();
+  const accuracy = document.getElementById('form-p2').value.trim();
+
+  if(!devId || !name) {
+    showToast('❌ Specifier mismatch: Please enter ID and Name');
+    return;
+  }
+
+  if(targetId === '') {
+    STATE.devices.unshift({
+      id: devId,
+      name,
+      type,
+      dept,
+      location: location || 'CT Suite',
+      status: 'Operational',
+      calibStatus: 'calibrated',
+      lastCal: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      nextCal: new Date(Date.now() + 180*24*60*60*1000).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      calibAccuracy: accuracy || '99.2%',
+      lastService: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      nextService: new Date(Date.now() + 90*24*60*60*1000).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      technician: 'Technician A',
+      temp: 36.8, acc: 99.2, stab: 98.7, volt: 120.4, errorCode: null
+    });
+    showToast(`✅ Device [${devId}] successfully registered!`);
+  } else {
+    const d = STATE.devices.find(x => x.id === targetId);
+    if(d) {
+      d.id = devId;
+      d.name = name;
+      d.type = type;
+      d.dept = dept;
+      d.location = location;
+      d.calibAccuracy = accuracy;
+      showToast(`✅ Device [${d.id}] configuration updated.`);
+    }
+  }
+
+  closeDeviceModal();
+  switchTab(STATE.currentTab);
+}
+
+function deleteDeviceNode(devId) {
+  const index = STATE.devices.findIndex(x => x.id === devId);
+  if(index !== -1) {
+    if(confirm(`Remove Device [${devId}] from active registry?`)) {
+      STATE.devices.splice(index, 1);
+      showToast(`🗑️ Device [${devId}] removed.`);
+      switchTab(STATE.currentTab);
+    }
+  }
+}
+
+function closeDeviceModal() { document.getElementById('deviceModal').classList.remove('open'); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  FEEDBACK REPORT SUBMITTER
+// ═══════════════════════════════════════════════════════════════════
+function submitFeedbackReport() {
+  const email = document.getElementById('feedback-email').value.trim();
+  const device = document.getElementById('feedback-device').value;
+  const category = document.getElementById('feedback-category').value;
+  const rating = document.getElementById('feedback-rating').value;
+  const text = document.getElementById('feedback-text').value.trim();
+
+  if(!text) {
+    showToast('❌ Please specify observations or suggestions');
+    return;
+  }
+
+  STATE.feedbackReports.unshift({
+    email: email || 'anonymous@hospital.com',
+    device,
+    category,
+    rating,
+    text,
+    timestamp: 'Just now'
+  });
+
+  showToast('✅ Feedback report transmitted successfully.');
+  switchTab('feedback');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  EXPORT CSV
+// ═══════════════════════════════════════════════════════════════════
+function exportDataLogs() {
+  let csv = "Node ID,Device Name,Department,Location,Status,Calibration Status,Last Calibration,Param 1,Param 2\n";
+  STATE.devices.forEach(d => {
+    csv += `"${d.id}","${d.name}","${d.dept}","${d.location}","${d.status}","${d.calibStatus}","${d.lastCal}","${d.calibAccuracy}"\n`;
+  });
+
+  const uri = "data:text/csv;charset=utf-8," + encodeURI(csv);
+  const link = document.createElement("a");
+  link.setAttribute("href", uri);
+  link.setAttribute("download", `BioMed_Registry_Audit_${new Date().toISOString().split('T')[0]}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('📥 Telemetry audit log exported (CSV).');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  OPENAI & GEMINI API INTEGRATOR
+// ═══════════════════════════════════════════════════════════════════
+function handleAgentSubmit() {
+  const input = document.getElementById('agentPromptInput');
+  if(!input) return;
+  const val = input.value.trim();
+  if(!val) return;
+  input.value = '';
+  sendAgentPrompt(val);
+}
+
+async function callRealAI(prompt) {
+  if (!API.key) {
+    throw new Error('Key unconfigured or rate-limited. Using localized intelligence.');
+  }
+
+  const systemCtx = `You are MedAI, an expert biomedical device management assistant for Sector 7 clinical engineering.
+Current hospital data:
+- Total devices: ${STATE.devices.length}
+- Calibrations overdue: ${STATE.devices.filter(d=>d.calibStatus==='overdue').length}
+- Compliance rate: ${Math.round((STATE.devices.filter(d => d.calibStatus === 'online').length / STATE.devices.length) * 100)}%
+Answer concisely in plain text. Use bullet points. Keep responses under 200 words.`;
+
+  if (API.provider === 'gemini') {
+    const payload = JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: systemCtx + '\n\nUser Question: ' + prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 512 }
+    });
+    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${API.model}:generateContent?key=${API.key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    });
+    if(!res.ok) {
+      res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${API.model}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API.key },
+        body: payload
+      });
+    }
+    if(!res.ok) throw new Error('Google Endpoint Refused Connection');
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response';
+  } else {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API.key },
+      body: JSON.stringify({
+        model: API.model,
+        messages: [{ role: 'system', content: systemCtx }, { role: 'user', content: prompt }],
+        max_tokens: 512,
+        temperature: 0.7
+      })
+    });
+    if(!res.ok) throw new Error('OpenAI Endpoint Refused Connection');
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || 'No response';
+  }
+}
+
+async function sendAgentPrompt(prompt) {
+  STATE.chatMessages.push({ role: 'user', text: prompt });
+  if(STATE.currentTab === 'media') {
+    document.getElementById('workspaceContent').innerHTML = renderMedia();
+  }
+
+  const botMsgObj = { role: 'bot', text: 'Typing...' };
+  STATE.chatMessages.push(botMsgObj);
+  if(STATE.currentTab === 'media') {
+    document.getElementById('workspaceContent').innerHTML = renderMedia();
+  }
+
+  let resp;
+  try {
+    resp = await callRealAI(prompt);
+  } catch (e) {
+    await new Promise(r => setTimeout(r, 400));
+    resp = synthesizeAgentResponse(prompt);
+  }
+
+  botMsgObj.text = '';
+  
+  const chunkSize = 20;
+  for (let i = 0; i < resp.length; i += chunkSize) {
+    botMsgObj.text = resp.substring(0, i + chunkSize);
+    if(STATE.currentTab === 'media') {
+      const box = document.getElementById('agentMsgsBox');
+      if(box) {
+        box.innerHTML = STATE.chatMessages.map(m => `
+          <div class="agent-bubble ${m.role}">
+            ${m.text.replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+          </div>
+        `).join('');
+        box.scrollTop = box.scrollHeight;
+      }
+    }
+    await new Promise(r => setTimeout(r, 12));
+  }
+
+  botMsgObj.text = resp;
+}
+
+function synthesizeAgentResponse(query) {
+  const q = query.toLowerCase();
+  
+  if (q.includes('calibrated') || q.includes('name') && q.includes('calibrat')) {
+    const valid = STATE.devices.filter(d => d.calibStatus === 'calibrated');
+    return `✅ **Currently Calibrated & Certified Clinical Systems (${valid.length} units)**\n\n` +
+      valid.map((d, i) => `**${i+1}. ${d.name}** [ID: \`${d.id}\`]\n• Location: ${d.location} (${d.dept})\n• Last Calibration: ${d.lastCal}`).join('\n\n');
+  }
+
+  if (q.includes('overdue') || q.includes('alert') || q.includes('critical') || q.includes('anomaly')) {
+    const overdue = STATE.devices.filter(d => d.calibStatus === 'overdue');
+    return `🚨 **URGENT ALERTS: Overdue Calibration Nodes Detected**\n\n` +
+      overdue.map((d, i) => `**${i+1}. ${d.name}** [\`${d.id}\`]\n• Location: ${d.location}\n• Status: Overdue (${d.lastCal})`).join('\n\n');
+  }
+
+  if (q.includes('mri') || q.includes('scanner') || q.includes('magnetom')) {
+    return `🔬 **Siemens MAGNETOM Vida 3T MRI Telemetry Analysis**\n\n` +
+      `• **Node ID**: \`MRI-77B\` | **Location**: Ward C, Floor 3\n` +
+      `• **Status**: Optimal Field (3.0 Tesla) | Coolant Level: 94%\n\n` +
+      `🛠️ **Calibration Protocol**:\n` +
+      `1. Run 3D Spherical Phantom Homogeneity Test (< 0.5 ppm).\n` +
+      `2. Verify RF Transmit/Receive Gain across array channels.\n` +
+      `3. Confirm cold head compressor pressure & Helium recovery.`;
+  }
+
+  if (q.includes('hi') || q.includes('hello') || q.includes('who are you')) {
+    return `👋 **Greetings! I am MedAI**, your real-time Clinical Engineering & Biomedical Autonomous Agent.\n\n` +
+      `I have direct telemetry access to all **${STATE.devices.length} medical devices** across Sector 7.\n\n` +
+      `How can I assist you with clinical equipment troubleshooting, compliance auditing, or calibration scheduling today?`;
+  }
+
+  return `🤖 **MedAI Local Response for: "${query}"**\n\n` +
+    `• Telemetry check passed.\n` +
+    `• Model in fallback mode.\n\n` +
+    `Ask me to *“Name the calibrated devices”*, *“Show critical anomalies”*, or *“Run MRI calibration diagnostic protocol”*.`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MODAL CONFIGURATION PANEL
+// ═══════════════════════════════════════════════════════════════════
+function openConfigModal() {
+  document.getElementById('config-provider').value = API.provider;
+  updateModelSelect();
+  document.getElementById('config-model').value = API.model;
+  document.getElementById('apiKeyField').value = API.key;
+  document.getElementById('configModal').classList.add('open');
+}
+
+function closeConfigModal() {
+  document.getElementById('configModal').classList.remove('open');
+}
+
+function updateModelSelect() {
+  const prov = document.getElementById('config-provider').value;
+  const select = document.getElementById('config-model');
+  select.innerHTML = MODELS[prov].map(m => `<option value="${m}">${m}</option>`).join('');
+}
+
+function saveConfigKey() {
+  const prov = document.getElementById('config-provider').value;
+  const model = document.getElementById('config-model').value;
+  const key = document.getElementById('apiKeyField').value.trim();
+
+  API.provider = prov;
+  API.model = model;
+  API.key = key;
+
+  localStorage.setItem('ai_provider', prov);
+  localStorage.setItem('ai_model', model);
+  localStorage.setItem('ai_key', key);
+
+  showToast('✅ Enterprise API configuration applied successfully!');
+  closeConfigModal();
+}
+
+function showToast(msg) {
+  const existing = document.getElementById('cyberToast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'cyberToast';
+  toast.style.cssText = `
+    position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+    background: var(--bg-card); border: 1px solid var(--border-neon); border-radius: 6px;
+    padding: 10px 16px; font-size: 11px; font-family: var(--font-mono); font-weight: 700;
+    color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,242,254,0.25);
+  `;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  REAL-TIME TELEMETRY CANVAS DRAWING & SIMULATION SERVICES
+// ═══════════════════════════════════════════════════════════════════
+let animationFrameId = null;
+let telemetryTimerId = null;
+
+function stopCanvasAnimations() {
+  if(animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+}
+
+// Telemetry State Buffer updates (continuous)
+function startTelemetrySim() {
+  if(telemetryTimerId) clearInterval(telemetryTimerId);
+
+  telemetryTimerId = setInterval(() => {
+    // Generate simulated values around selected device parameters
+    const d = STATE.devices.find(x => x.id === STATE.selectedDeviceId) || STATE.devices[0];
+    
+    let baseTemp = d.temp || 36.8;
+    let baseAcc = parseFloat(d.calibAccuracy) || 99.2;
+    let baseStab = d.stab || 98.7;
+    let baseVolt = d.volt || 120.4;
+
+    // Simulate minor fluctuations
+    let nextTemp = baseTemp + (Math.random() - 0.5) * 0.3;
+    let nextAcc = Math.min(100, Math.max(90, baseAcc + (Math.random() - 0.5) * 0.4));
+    let nextStab = Math.min(100, Math.max(80, baseStab + (Math.random() - 0.5) * 0.5));
+    let nextVolt = baseVolt + (Math.random() - 0.5) * 0.9;
+
+    telemetryStreams.temp.push(nextTemp);
+    telemetryStreams.temp.shift();
+    telemetryStreams.acc.push(nextAcc);
+    telemetryStreams.acc.shift();
+    telemetryStreams.stab.push(nextStab);
+    telemetryStreams.stab.shift();
+    telemetryStreams.volt.push(nextVolt);
+    telemetryStreams.volt.shift();
+
+    // Update Live values labels on Dashboard DOM
+    const elA = document.getElementById('telValA');
+    const elB = document.getElementById('telValB');
+    const elC = document.getElementById('telValC');
+    const elD = document.getElementById('telValD');
+
+    if(elA) elA.textContent = `${nextTemp.toFixed(1)}°C`;
+    if(elB) elB.textContent = `${nextAcc.toFixed(1)}%`;
+    if(elC) elC.textContent = `${nextStab.toFixed(1)}%`;
+    if(elD) elD.textContent = `${nextVolt.toFixed(1)}V`;
+
+  }, 600);
+}
+startTelemetrySim();
+
+function initDashboardCanvas() {
+  const canvasA = document.getElementById('canvasTelA');
+  const canvasB = document.getElementById('canvasTelB');
+  const canvasC = document.getElementById('canvasTelC');
+  const canvasD = document.getElementById('canvasTelD');
+  if(!canvasA || !canvasB || !canvasC || !canvasD) return;
+
+  const ctxA = canvasA.getContext('2d');
+  const ctxB = canvasB.getContext('2d');
+  const ctxC = canvasC.getContext('2d');
+  const ctxD = canvasD.getContext('2d');
+
+  function resize() {
+    [canvasA, canvasB, canvasC, canvasD].forEach(c => {
+      c.width = c.parentElement.clientWidth;
+      c.height = c.parentElement.clientHeight - 24;
+    });
+  }
+  resize();
+
+  function drawTimeSeries(ctx, data, color) {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    
+    // Draw technical grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.015)';
+    ctx.lineWidth = 1;
+    for(let i=0; i<ctx.canvas.width; i+=40) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, ctx.canvas.height); ctx.stroke();
+    }
+    for(let i=0; i<ctx.canvas.height; i+=25) {
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(ctx.canvas.width, i); ctx.stroke();
+    }
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    
+    const spacing = ctx.canvas.width / (maxPoints - 1);
+    
+    // Find min and max for scaling
+    let min = Math.min(...data);
+    let max = Math.max(...data);
+    let range = max - min || 1;
+    
+    data.forEach((val, index) => {
+      const x = index * spacing;
+      // Map to height
+      const y = ctx.canvas.height - 10 - ((val - min) / range) * (ctx.canvas.height - 20);
+      if(index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Subtle neon glow under line
+    ctx.fillStyle = color.replace(')', ', 0.04)');
+    ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+    ctx.lineTo(0, ctx.canvas.height);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function renderFrame() {
+    if(STATE.currentTab !== 'dashboard') return;
+
+    let colA = '#00f2fe';
+    let colB = '#9d4edd';
+    let colC = '#00f59b';
+    let colD = '#ffb703';
+
+    if(activeTheme === 'matrix') { colA = '#00f59b'; colB = '#00f59b'; colC = '#00f59b'; colD = '#00f59b'; }
+    else if(activeTheme === 'sunrise') { colA = '#ffb703'; colB = '#ffb703'; colC = '#ffb703'; colD = '#ffb703'; }
+    else if(activeTheme === 'solaris') { colA = '#ff2a6d'; colB = '#ff2a6d'; colC = '#ff2a6d'; colD = '#ff2a6d'; }
+    else if(activeTheme === 'slate') { colA = '#94a3b8'; colB = '#64748b'; colC = '#475569'; colD = '#cbd5e1'; }
+    else if(activeTheme === 'medical') { colA = '#0ea5e9'; colB = '#0ea5e9'; colC = '#0ea5e9'; colD = '#0ea5e9'; }
+
+    drawTimeSeries(ctxA, telemetryStreams.temp, colA);
+    drawTimeSeries(ctxB, telemetryStreams.acc, colB);
+    drawTimeSeries(ctxC, telemetryStreams.stab, colC);
+    drawTimeSeries(ctxD, telemetryStreams.volt, colD);
+
+    animationFrameId = requestAnimationFrame(renderFrame);
+  }
+  animationFrameId = requestAnimationFrame(renderFrame);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BIOMEDICAL DEVICE NETWORK VISUALIZATION NODES
+// ═══════════════════════════════════════════════════════════════════
+const biomedNodes = [
+  { id: 'ECG-001', name: 'ECG-001', type: 'ECG MACHINE', x: 120, y: 100, radius: 24 },
+  { id: 'PM-004', name: 'PATIENT-04', type: 'PATIENT MONITOR', x: 300, y: 70, radius: 24 },
+  { id: 'IP-007', name: 'INFUSION-07', type: 'INFUSION PUMP', x: 480, y: 110, radius: 24 },
+  { id: 'VENT-002', name: 'VENT-02', type: 'VENTILATOR', x: 420, y: 240, radius: 24 },
+  { id: 'BA-003', name: 'ANALYZER-03', type: 'BLOOD ANALYZER', x: 260, y: 260, radius: 24 },
+  { id: 'XRY-004', name: 'X-RAY-04', type: 'X-RAY MACHINE', x: 110, y: 220, radius: 24 }
+];
+
+function initNetworkCanvasNodes() {
+  const canvas = document.getElementById('networkCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('netVisualizerWrap');
+  const tooltip = document.getElementById('deviceTooltip');
+
+  function resize() {
+    canvas.width = wrap.clientWidth;
+    canvas.height = wrap.clientHeight;
+  }
+  resize();
+
+  let hoveredNode = null;
+  let pulseVal = 0;
+
+  // Track hover coordinate overlays
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    hoveredNode = null;
+    biomedNodes.forEach(node => {
+      // Scale coordinates to dynamic canvas size
+      const scaleX = canvas.width / 600;
+      const scaleY = canvas.height / 320;
+      const nx = node.x * scaleX;
+      const ny = node.y * scaleY;
+
+      const dist = Math.hypot(mouseX - nx, mouseY - ny);
+      if(dist < node.radius) {
+        hoveredNode = node;
+      }
+    });
+
+    if(hoveredNode) {
+      const d = STATE.devices.find(x => x.id === hoveredNode.id);
+      if(d) {
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${mouseX + 15}px`;
+        tooltip.style.top = `${mouseY + 15}px`;
+        tooltip.innerHTML = `
+          <strong style="color:#fff; font-family:var(--font-display); font-size:11px;">${d.id}</strong><br/>
+          <span style="color:var(--text-muted); font-size:9px; font-family:var(--font-mono);">${d.type}</span><br/>
+          <div style="margin-top:6px; font-size:10px;">
+            Status: <span style="color:${d.status==='Operational'?'var(--neon-green)':'var(--neon-pink)'}; font-weight:700;">${d.status.toUpperCase()}</span><br/>
+            Accuracy: <strong style="color:var(--neon-cyan);">${d.calibAccuracy}</strong><br/>
+            Last Calib: <span>${d.lastCal}</span><br/>
+            Next Due: <span>${d.nextCal}</span>
+          </div>
+        `;
+      }
+    } else {
+      tooltip.style.display = 'none';
+    }
+  });
+
+  // Diagnostic modal triggers on click
+  canvas.addEventListener('click', (e) => {
+    if(hoveredNode) {
+      openDeviceDiagnostics(hoveredNode.id);
+    }
+  });
+
+  function drawNodes() {
+    if(STATE.currentTab !== 'dashboard') return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const scaleX = canvas.width / 600;
+    const scaleY = canvas.height / 320;
+
+    pulseVal += 0.05;
+    const scalePulse = 1 + Math.sin(pulseVal) * 0.08;
+
+    // Draw grid mesh connections
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)';
+    ctx.lineWidth = 1;
+    for(let i=0; i<canvas.width; i+=30) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+    }
+    for(let i=0; i<canvas.height; i+=30) {
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+    }
+
+    // Connect nodes using technical dashed vector links
+    ctx.strokeStyle = 'rgba(0, 242, 254, 0.06)';
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for(let i=0; i<biomedNodes.length; i++) {
+      const n1 = biomedNodes[i];
+      const n2 = biomedNodes[(i+1) % biomedNodes.length];
+      ctx.moveTo(n1.x * scaleX, n1.y * scaleY);
+      ctx.lineTo(n2.x * scaleX, n2.y * scaleY);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]); // Reset
+
+    // Render biomedical nodes
+    biomedNodes.forEach(node => {
+      const d = STATE.devices.find(x => x.id === node.id) || { status: 'Operational' };
+      
+      let nodeColor = '#00f2fe';
+      if(d.status === 'Calibration Due') {
+        nodeColor = '#ffb703';
+      } else if(d.status.includes('Maintenance')) {
+        nodeColor = '#ff2a6d';
+      } else {
+        if (activeTheme === 'matrix') nodeColor = '#00f59b';
+        else if (activeTheme === 'sunrise') nodeColor = '#ffb703';
+        else if (activeTheme === 'solaris') nodeColor = '#ff2a6d';
+        else if (activeTheme === 'slate') nodeColor = '#94a3b8';
+        else if (activeTheme === 'medical') nodeColor = '#0ea5e9';
+      }
+
+      const nx = node.x * scaleX;
+      const ny = node.y * scaleY;
+      const r = node.radius * scalePulse;
+
+      // Dark card-like fill backing for readability
+      ctx.fillStyle = '#05070a';
+      ctx.beginPath();
+      ctx.arc(nx, ny, r, 0, Math.PI*2);
+      ctx.fill();
+
+      // Glowing accent border ring
+      ctx.shadowColor = nodeColor;
+      ctx.shadowBlur = 8;
+      ctx.strokeStyle = nodeColor;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(nx, ny, r, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.shadowBlur = 0; // Reset
+
+      // Sharp, highly visible text label inside node
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 8px var(--font-mono)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(node.name, nx, ny);
+    });
+
+    requestAnimationFrame(drawNodes);
+  }
+  drawNodes();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  LANDING PAGE 3D GRID VISUALIZER
+// ═══════════════════════════════════════════════════════════════════
+let loginCanvasFrameId = null;
+let dragRotation = { pitch: 0.4, yaw: 0.5 };
+let isDragging = false;
+let lastMousePos = { x: 0, y: 0 };
+
+function initLogin3DCanvas() {
+  const canvas = document.getElementById('loginCanvas3D');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const points = [];
+  const spacing = 80;
+  const size = 3;
+  for(let x = -size; x <= size; x++) {
+    for(let y = -size; y <= size; y++) {
+      for(let z = -size; z <= size; z++) {
+        points.push({ x: x * spacing, y: y * spacing, z: z * spacing });
+      }
+    }
+  }
+
+  window.addEventListener('mousedown', (e) => {
+    if(document.getElementById('loginScreen').style.display === 'none') return;
+    isDragging = true;
+    lastMousePos = { x: e.clientX, y: e.clientY };
+  });
+  window.addEventListener('mousemove', (e) => {
+    if(!isDragging) return;
+    const dx = e.clientX - lastMousePos.x;
+    const dy = e.clientY - lastMousePos.y;
+    dragRotation.yaw += dx * 0.005;
+    dragRotation.pitch += dy * 0.005;
+    lastMousePos = { x: e.clientX, y: e.clientY };
+  });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+
+  function draw3D() {
+    if(document.getElementById('loginScreen').style.display === 'none') {
+      cancelAnimationFrame(loginCanvasFrameId);
+      return;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const fov = 400;
+
+    if(!isDragging) {
+      dragRotation.yaw += 0.0015;
+    }
+
+    const cosP = Math.cos(dragRotation.pitch);
+    const sinP = Math.sin(dragRotation.pitch);
+    const cosY = Math.cos(dragRotation.yaw);
+    const sinY = Math.sin(dragRotation.yaw);
+
+    const projected = [];
+
+    points.forEach(p => {
+      let x1 = p.x * cosY - p.z * sinY;
+      let z1 = p.x * sinY + p.z * cosY;
+      let y2 = p.y * cosP - z1 * sinP;
+      let z2 = p.y * sinP + z1 * cosP;
+
+      const depth = z2 + 450;
+      if(depth > 0) {
+        const scale = fov / depth;
+        const sx = cx + x1 * scale;
+        const sy = cy + y2 * scale;
+        projected.push({ x: sx, y: sy, scale, z: z2 });
+      }
+    });
+
+    ctx.lineWidth = 0.5;
+    for(let i=0; i<projected.length; i++) {
+      const p1 = projected[i];
+      for(let j=i+1; j<projected.length; j++) {
+        const p2 = projected[j];
+        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        if(dist < 55 * p1.scale) {
+          ctx.strokeStyle = `rgba(0, 242, 254, ${0.16 * (p1.scale / 2.2)})`;
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    projected.forEach(p => {
+      ctx.fillStyle = `rgba(0, 242, 254, ${0.35 + (p.z + 150)/500})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(0.5, p.scale * 0.7), 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    loginCanvasFrameId = requestAnimationFrame(draw3D);
+  }
+  draw3D();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  DYNAMIC 3D VIEWPORT BACKGROUND CONSTELLATION SYSTEM (120 PARTICLES)
+// ═══════════════════════════════════════════════════════════════════
+let bgCanvasFrameId = null;
+let bgPoints = [];
+const numBgPoints = 120;
+
+function initBackground3D() {
+  const canvas = document.getElementById('cyberBackgroundCanvas3D');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  bgPoints = [];
+  for(let i=0; i<numBgPoints; i++) {
+    bgPoints.push({
+      x: (Math.random() - 0.5) * 1000,
+      y: (Math.random() - 0.5) * 1000,
+      z: (Math.random() - 0.5) * 1000,
+      radius: Math.random() * 2 + 1
+    });
+  }
+
+  let rotationAngle = 0;
+
+  function drawBg() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let nodeColor = 'rgba(0, 242, 254, ';
+    if (activeTheme === 'matrix') nodeColor = 'rgba(0, 245, 155, ';
+    else if (activeTheme === 'sunrise') nodeColor = 'rgba(255, 183, 3, ';
+    else if (activeTheme === 'solaris') nodeColor = 'rgba(255, 42, 109, ';
+    else if (activeTheme === 'slate') nodeColor = 'rgba(255, 255, 255, ';
+    else if (activeTheme === 'medical') nodeColor = 'rgba(14, 165, 233, ';
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const fov = 400;
+
+    rotationAngle += 0.0006;
+
+    const cosR = Math.cos(rotationAngle);
+    const sinR = Math.sin(rotationAngle);
+
+    const projected = [];
+
+    bgPoints.forEach(p => {
+      let x1 = p.x * cosR - p.z * sinR;
+      let z1 = p.x * sinR + p.z * cosR;
+
+      const depth = z1 + 900;
+      if(depth > 0) {
+        const scale = fov / depth;
+        const sx = cx + x1 * scale;
+        const sy = cy + p.y * scale;
+        projected.push({ x: sx, y: sy, scale, z: z1 });
+      }
+    });
+
+    ctx.lineWidth = 0.5;
+    for(let i=0; i<projected.length; i++) {
+      const p1 = projected[i];
+      for(let j=i+1; j<projected.length; j++) {
+        const p2 = projected[j];
+        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        if(dist < 100 * p1.scale) {
+          ctx.strokeStyle = `${nodeColor}${0.04 * (1 - dist/(100*p1.scale))})`;
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    projected.forEach(p => {
+      ctx.fillStyle = `${nodeColor}${0.12 * p.scale})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius * p.scale, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    bgCanvasFrameId = requestAnimationFrame(drawBg);
+  }
+  bgCanvasFrameId = requestAnimationFrame(drawBg);
+}
+
+window.addEventListener('load', () => {
+  initLogin3DCanvas();
+  initBackground3D();
+});
+setTimeout(() => {
+  initLogin3DCanvas();
+  initBackground3D();
+}, 100);
+
+// Window load init
+window.addEventListener('resize', () => {
+  if(window.innerWidth <= 1024) {
+    if(document.getElementById('appShell').style.display !== 'none') {
+      document.getElementById('mobileBottomNav').style.display = 'flex';
+    }
+  } else {
+    document.getElementById('mobileBottomNav').style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>
