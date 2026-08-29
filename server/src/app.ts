@@ -40,13 +40,13 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(config.isDevelopment ? 'dev' : 'combined'));
 
-// ─── Rate Limiting ────────────────────────────────────────────────────────────
-app.use('/api', globalRateLimiter);
-
 // ─── Health Check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
   res.json({ success: true, status: 'healthy', timestamp: new Date().toISOString() });
 });
+
+// ─── Rate Limiting ────────────────────────────────────────────────────────────
+app.use('/api', globalRateLimiter);
 
 // ─── Swagger API Docs ─────────────────────────────────────────────────────────
 const swaggerSpec = swaggerJsdoc({
