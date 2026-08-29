@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { calibrationService, deviceService, technicianService } from '../services';
-import { Device, Technician } from '../types';
+import type { Device, Technician } from '../types';
 import { useToast } from '../context/ToastContext';
 import { Spinner } from '../components/ui';
 

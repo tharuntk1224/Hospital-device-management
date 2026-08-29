@@ -5,7 +5,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import { dashboardService } from '../services';
-import { DashboardStats } from '../types';
+import type { DashboardStats } from '../types';
 import { StatCard, PageLoader, ErrorState } from '../components/ui';
 import { CalibrationDueBadge } from '../components/ui/Badge';
 import { format } from 'date-fns';

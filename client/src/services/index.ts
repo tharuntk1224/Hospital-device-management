@@ -1,5 +1,5 @@
 import api from './api';
-import { Device, PaginatedData, PaginationParams } from '../types';
+import { type Device, type PaginatedData, type PaginationParams } from '../types';
 
 export interface DeviceFilters extends PaginationParams {
   departmentId?: string;

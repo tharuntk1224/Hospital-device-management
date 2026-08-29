@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { calibrationService } from '../services';
-import { Calibration } from '../types';
+import type { Calibration } from '../types';
 import { PageLoader, ErrorState, EmptyState, SearchInput, Pagination } from '../components/ui';
 import { CalibrationStatusBadge } from '../components/ui/Badge';
 import { format } from 'date-fns';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { deviceService, departmentService, categoryService } from '../services';
-import { Device, Department, DeviceCategory } from '../types';
+import type { Device, Department, DeviceCategory } from '../types';
 import {
   PageLoader, ErrorState, EmptyState, SearchInput, Pagination,
 } from '../components/ui';

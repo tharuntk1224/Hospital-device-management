@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  CalibrationDueStatus, DeviceStatus, RiskLevel,
-  CalibrationStatus, MaintenanceStatus, MaintenancePriority,
-  TechnicianStatus,
+  type CalibrationDueStatus, type DeviceStatus, type RiskLevel,
+  type CalibrationStatus, type MaintenanceStatus, type MaintenancePriority,
+  type TechnicianStatus,
 } from '../../types';
 
 // ── Status to badge class maps ────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { notificationService } from '../services';
-import { Notification } from '../types';
+import type { Notification } from '../types';
 import { PageLoader, ErrorState, EmptyState } from '../components/ui';
 import { format } from 'date-fns';
 import { useToast } from '../context/ToastContext';

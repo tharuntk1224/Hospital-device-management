@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { deviceService, calibrationService, maintenanceService } from '../services';
-import { Device, Calibration, MaintenanceRecord } from '../types';
+import type { Device, Calibration, MaintenanceRecord } from '../types';
 import {
   PageLoader, ErrorState,
 } from '../components/ui';

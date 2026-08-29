@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { technicianService } from '../services';
-import { Technician } from '../types';
+import type { Technician } from '../types';
 import { PageLoader, ErrorState, EmptyState, SearchInput } from '../components/ui';
 import { TechStatusBadge } from '../components/ui/Badge';
 import { useAuth } from '../context/AuthContext';

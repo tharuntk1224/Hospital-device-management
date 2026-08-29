@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { auditService } from '../services';
-import { AuditLog } from '../types';
+import type { AuditLog } from '../types';
 import { PageLoader, ErrorState, EmptyState, Pagination } from '../components/ui';
 import { format } from 'date-fns';
 

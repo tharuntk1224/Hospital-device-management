@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { deviceService, departmentService, categoryService, technicianService } from '../services';
-import { Department, DeviceCategory, Technician } from '../types';
+import type { Department, DeviceCategory, Technician } from '../types';
 import { useToast } from '../context/ToastContext';
 import { Spinner } from '../components/ui';
 

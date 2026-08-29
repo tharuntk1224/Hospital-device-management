@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { maintenanceService } from '../services';
-import { MaintenanceRecord } from '../types';
+import type { MaintenanceRecord } from '../types';
 import { PageLoader, ErrorState, EmptyState, SearchInput, Pagination } from '../components/ui';
 import { MaintenanceStatusBadge, PriorityBadge } from '../components/ui/Badge';
 import { format } from 'date-fns';
